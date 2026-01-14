@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizar | Portafolio Lean Six Sigma</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        :root {
+            --primary-color: #0f172a;
+            --accent-color: #2563eb;
+            --text-dark: #334155;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
+
+        /* --- NAVEGACIÓN --- */
+        header { background-color: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 80px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); text-transform: uppercase; }
+        .logo span { color: var(--accent-color); }
+        nav ul { list-style: none; display: flex; gap: 2rem; }
+        nav a { text-decoration: none; color: var(--text-dark); font-weight: 500; font-size: 0.95rem; transition: color 0.3s; }
+        nav a:hover { color: var(--accent-color); }
+        nav a.active { color: var(--accent-color); font-weight: 600; border-bottom: 2px solid var(--accent-color); }
+
+        /* --- HEADER DE PÁGINA --- */
+        .page-header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-header p { color: #cbd5e1; max-width: 800px; margin: 0 auto; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; }
+
+        /* --- ISHIKAWA VISUAL --- */
+        .ishikawa-container {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 4rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .ishikawa-placeholder {
+            background-color: #f1f5f9;
+            height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #94a3b8;
+            color: #64748b;
+            font-weight: 600;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        /* --- GRID DE ANÁLISIS --- */
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 1rem;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .cause-card {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        
+        .cause-card:hover { transform: translateY(-3px); }
+
+        /* Encabezado de la tarjeta con color */
+        .card-header {
+            padding: 1.5rem;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Colores por categoría */
+        .bg-process { background: linear-gradient(135deg, #0ea5e9, #0284c7); } /* Azul claro */
+        .bg-people { background: linear-gradient(135deg, #f59e0b, #d97706); } /* Naranja */
+        .bg-tech { background: linear-gradient(135deg, #6366f1, #4f46e5); }   /* Índigo */
+        .bg-data { background: linear-gradient(135deg, #10b981, #059669); }    /* Verde */
+        .bg-management { background: linear-gradient(135deg, #ef4444, #dc2626); } /* Rojo */
+        .bg-env { background: linear-gradient(135deg, #64748b, #475569); }     /* Gris */
+
+        .card-body { padding: 1.5rem; }
+
+        .cause-item { margin-bottom: 1.2rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; }
+        .cause-item:last-child { border-bottom: none; margin-bottom: 0; }
+        
+        .cause-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+        }
+        .cause-desc { font-size: 0.95rem; color: var(--text-light); }
+
+        /* FOOTER */
+        footer { background-color: var(--white); border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.9rem; color: var(--text-light); margin-top: auto;}
+
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; height: auto; padding: 1rem; }
+            nav ul { flex-wrap: wrap; justify-content: center; margin-top: 1rem; }
+            .analysis-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">LSS <span>PROJECT</span></div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="definir.html">Definir</a></li>
+                    <li><a href="medir.html">Medir</a></li>
+                    <li><a href="analizar.html" class="active">Analizar</a></li>
+                    <li><a href="mejorar.html">Mejorar</a></li>
+                    <li><a href="controlar.html">Controlar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <h1>4.3. Analizar</h1>
+        <p>Identificación de Causas Raíz mediante Diagrama de Ishikawa</p>
+    </div>
+
+    <div class="container">
+
+        <h2 class="section-title">4.3.1. Diagrama de Ishikawa Consolidado</h2>
+        <div class="ishikawa-container">
+            
+
+[Image of Fishbone diagram showing root causes]
+
+            <div class="ishikawa-placeholder">
+                [Imagen: Diagrama de Ishikawa / Espina de Pescado]
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-light);">
+                Figura 2: Diagrama de Ishikawa consolidado, resaltando las ocho principales causas identificadas mediante el diagrama de Pareto.
+            </p>
+        </div>
+
+        <h2 class="section-title">Detalle de Causas por Categoría</h2>
+        <div class="analysis-grid">
+
+            <div class="cause-card">
+                <div class="card-header bg-process">Procesos (Metodología)</div>
+                <div class="card-body">
+                    <div class="cause-item">
+                        <span class="cause-title">Problema mal definido</span>
+                        <span class="cause-desc">Se define como "falta de solución" en lugar de una necesidad real, encubriendo el problema raíz.</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Instructivos poco claros</span>
+                        <span class="cause-desc">Explican el "qué" pero no el "cómo" redactar técnicamente. Falta de guías.</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Componentes mal formulados</span>
+                        <span class="cause-desc">Uso de verbos (acciones) en lugar de sustantivos de resultado.</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Quiebres del marco lógico</span>
+                        <span class="cause-desc">Aprobación de componentes sin validar robustamente el Propósito.</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Estudio técnico en una sola etapa</span>
+                        <span class="cause-desc">Genera fatiga y alta complejidad al revisar todo el volumen documental de una sola vez.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cause-card">
+                <div class="card-header bg-people">Personas (Capital Humano)</div>
+                <div class="card-body">
+                    <div class="cause-item">
+                        <span class="cause-title">Sesgo del formulador</span>
+                        <span class="cause-desc">El redactor escribe "para sí mismo", asumiendo conocimientos que el evaluador no tiene.</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Fatiga-Multitarea</span>
+                        <span class="cause-desc">Errores por cansancio y una sola persona manejando técnica, finanzas y legalidad.</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Bajo dominio del Marco Lógico</span>
+                        <span class="cause-desc">Insuficiente capacidad para distinguir jerarquías (Fin vs. Propósito).</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Foco excesivo en obras físicas</span>
+                        <span class="cause-desc">Énfasis en el activo físico sin justificar su función real.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cause-card">
+                <div class="card-header bg-tech">Tecnología (Herramientas)</div>
+                <div class="card-body">
+                    <div class="cause-item">
+                        <span class="cause-title">Campos sin instrucciones</span>
+                        <span class="cause-desc">Texto libre sin "Input Masks" que permite divagación.</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Sin validaciones lógicas</span>
+                        <span class="cause-desc">La plataforma no alerta errores matemáticos ni desconexiones.</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Sin Repositorio histórico</span>
+                        <span class="cause-desc">No hay acceso a diagnósticos previos, obligando a "reinventar la rueda".</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Formato Narrativo Plano</span>
+                        <span class="cause-desc">Cajas de texto simples impiden visualizar jerarquías.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cause-card">
+                <div class="card-header bg-data">Información (Datos)</div>
+                <div class="card-body">
+                    <div class="cause-item">
+                        <span class="cause-title">Ausencia de Línea Base</span>
+                        <span class="cause-desc">Falta de datos históricos para comparar "antes" y "después".</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Datos no territoriales</span>
+                        <span class="cause-desc">Uso de datos nacionales (Censo) para problemas muy locales.</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Diagnóstico subjetivo</span>
+                        <span class="cause-desc">Predominio de "muchos/pocos" sobre datos duros.</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Sin medios de verificación</span>
+                        <span class="cause-desc">Componentes imposibles de auditar objetivamente.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cause-card">
+                <div class="card-header bg-management">Gestión</div>
+                <div class="card-body">
+                    <div class="cause-item">
+                        <span class="cause-title">Proyectos Top-Down</span>
+                        <span class="cause-desc">Iniciativas por instrucción directa que obligan a inventar validaciones inversas.</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Presión por los Plazos</span>
+                        <span class="cause-desc">La urgencia de ejecutar presupuesto sacrifica la calidad de formulación.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cause-card">
+                <div class="card-header bg-env">Entorno / Normativa</div>
+                <div class="card-body">
+                    <div class="cause-item">
+                        <span class="cause-title">Bases ambiguas</span>
+                        <span class="cause-desc">Uso de lenguaje burocrático amplio que se traslada a la formulación.</span>
+                    </div>
+                    <div class="cause-item">
+                        <span class="cause-title">Alta Diversidad Sectorial</span>
+                        <span class="cause-desc">Dificultad para aplicar un estándar único de "claridad" para todas las industrias.</span>
+                    </div>
+                </div>
+            </div>
+
+        </div> </div>
+
+    <footer>
+        <p>&copy; 2026 Abraham Castro. Licenciado en Ciencias de la Ingeniería</p>
+    </footer>
+
+</body>
+</html>

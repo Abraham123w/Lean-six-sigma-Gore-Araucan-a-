@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mejorar | Portafolio Lean Six Sigma</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        :root {
+            --primary-color: #0f172a;
+            --accent-color: #2563eb;
+            --success-color: #059669;
+            --text-dark: #334155;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
+
+        /* --- NAVEGACIÓN --- */
+        header { background-color: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 80px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); text-transform: uppercase; }
+        .logo span { color: var(--accent-color); }
+        nav ul { list-style: none; display: flex; gap: 2rem; }
+        nav a { text-decoration: none; color: var(--text-dark); font-weight: 500; font-size: 0.95rem; transition: color 0.3s; }
+        nav a:hover { color: var(--accent-color); }
+        nav a.active { color: var(--accent-color); font-weight: 600; border-bottom: 2px solid var(--accent-color); }
+
+        /* --- HEADER DE PÁGINA --- */
+        .page-header { background-color: var(--primary-color); color: var(--white); padding: 3rem 2rem; text-align: center; }
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-header p { color: #cbd5e1; max-width: 800px; margin: 0 auto; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 3rem 2rem; }
+
+        /* --- TIMELINE DE IMPLEMENTACIÓN --- */
+        .intro-box {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 3rem;
+            border-left: 5px solid var(--success-color);
+        }
+
+        .timeline { position: relative; max-width: 800px; margin: 0 auto; }
+        
+        /* Línea vertical */
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: #e2e8f0;
+            top: 0;
+            bottom: 0;
+            left: 30px; /* Ajuste para móvil/desktop */
+            margin-left: -2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            margin-left: 60px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+        }
+
+        /* Círculo del nodo */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: 100%;
+            background-color: var(--white);
+            border: 4px solid var(--accent-color);
+            top: 30px;
+            border-radius: 50%;
+            z-index: 1;
+            margin-right: 22px; /* Distancia al nodo */
+        }
+
+        .phase-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        
+        .phase-1 .phase-badge { background-color: #dcfce7; color: #15803d; } /* Verde claro */
+        .phase-2 .phase-badge { background-color: #dbeafe; color: #1e40af; } /* Azul claro */
+        .phase-3 .phase-badge { background-color: #f3e8ff; color: #7e22ce; } /* Violeta */
+
+        .phase-1 .timeline-item::before { border-color: #15803d; }
+        .phase-2 .timeline-item::before { border-color: #1e40af; }
+        .phase-3 .timeline-item::before { border-color: #7e22ce; }
+
+        .time-frame {
+            font-weight: 700;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .timeline-title { font-size: 1.5rem; color: var(--primary-color); margin-bottom: 1rem; }
+        .timeline-content ul { padding-left: 1.2rem; margin-top: 1rem; }
+        .timeline-content li { margin-bottom: 0.5rem; color: var(--text-dark); }
+        
+        .impact-box {
+            margin-top: 1.5rem;
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            color: var(--primary-color);
+            border: 1px dashed var(--border);
+        }
+
+        footer { background-color: var(--white); border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.9rem; color: var(--text-light); margin-top: auto;}
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">LSS <span>PROJECT</span></div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="definir.html">Definir</a></li>
+                    <li><a href="medir.html">Medir</a></li>
+                    <li><a href="analizar.html">Analizar</a></li>
+                    <li><a href="mejorar.html" class="active">Mejorar</a></li>
+                    <li><a href="controlar.html">Controlar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <h1>4.4. Mejorar</h1>
+        <p>Plan de Transformación Gradual del Sistema de Postulación</p>
+    </div>
+
+    <div class="container">
+        
+        <div class="intro-box">
+            <h3 style="margin-bottom: 10px;">Estrategia de Implementación</h3>
+            <p>
+                El plan propone una transformación gradual priorizando la higiene administrativa, seguida de digitalización 
+                y analítica estratégica. Se validarán las mejoras mediante una <strong>prueba piloto</strong> en un grupo controlado 
+                para mitigar riesgos, siguiendo buenas prácticas ágiles.
+            </p>
+        </div>
+
+        <div class="timeline">
+            
+            <div class="phase-1">
+                <div class="timeline-item">
+                    <span class="phase-badge">Fase 1: Higiene Administrativa</span>
+                    <span class="time-frame">Tiempo estimado: 0 - 6 meses</span>
+                    <h3 class="timeline-title">Estandarización y Soporte</h3>
+                    <div class="timeline-content">
+                        <p>Enfoque en mitigar errores humanos sin desarrollo de software complejo.</p>
+                        <ul>
+                            <li><strong>Guías Multipropósito:</strong> PDF, Excel y JSON para generar salidas estandarizadas.</li>
+                            <li><strong>Repositorio Casos de Éxito:</strong> Base de datos de proyectos históricos aprobados para replicar estándares.</li>
+                            <li><strong>Soporte Visual:</strong> Infografías interactivas sobre errores comunes.</li>
+                        </ul>
+                        <div class="impact-box">
+                            Impacto Esperado: Reducción de reprocesos.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-2">
+                <div class="timeline-item">
+                    <span class="phase-badge">Fase 2: Digitalización</span>
+                    <span class="time-frame">Tiempo estimado: 6 - 18 meses</span>
+                    <h3 class="timeline-title">GORE Digital y Automatización</h3>
+                    <div class="timeline-content">
+                        <p>Eliminación de fricciones analógicas mediante reglas de negocio estrictas.</p>
+                        <ul>
+                            <li><strong>Plataforma Web Nativa:</strong> Eliminación del papel y correos electrónicos.</li>
+                            <li><strong>Control Activo:</strong> Validaciones automáticas (Input Masks) que impiden avanzar con errores formales.</li>
+                            <li><strong>Datos Estructurados:</strong> Almacenamiento que facilita trazabilidad y reutilización.</li>
+                        </ul>
+                        [Image of Web Platform Dashboard Mockup]
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-3">
+                <div class="timeline-item">
+                    <span class="phase-badge">Fase 3: Inteligencia</span>
+                    <span class="time-frame">Tiempo estimado: 18 - 36 meses</span>
+                    <h3 class="timeline-title">Inteligencia Predictiva</h3>
+                    <div class="timeline-content">
+                        <p>Toma de decisiones basada en datos para optimización estratégica.</p>
+                        <ul>
+                            <li><strong>Analítica Avanzada:</strong> Modelos diagnósticos/predictivos sobre data digitalizada.</li>
+                            <li><strong>KPIs Territoriales:</strong> Dashboards en tiempo real para medir impacto del gasto y eficiencia operativa.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Abraham Castro. Licenciado en Ciencias de la Ingeniería</p>
+    </footer>
+
+</body>
+</html>

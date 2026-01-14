@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controlar y Conclusiones | Portafolio Lean Six Sigma</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        :root {
+            --primary-color: #0f172a;
+            --accent-color: #2563eb;
+            --danger-color: #dc2626;
+            --success-color: #059669;
+            --text-dark: #334155;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
+
+        /* Navegación */
+        header { background-color: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 80px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); text-transform: uppercase; }
+        .logo span { color: var(--accent-color); }
+        nav ul { list-style: none; display: flex; gap: 2rem; }
+        nav a { text-decoration: none; color: var(--text-dark); font-weight: 500; font-size: 0.95rem; transition: color 0.3s; }
+        nav a:hover { color: var(--accent-color); }
+        nav a.active { color: var(--accent-color); font-weight: 600; border-bottom: 2px solid var(--accent-color); }
+
+        /* Header de Página */
+        .page-header { background-color: var(--primary-color); color: var(--white); padding: 3rem 2rem; text-align: center; }
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-header p { color: #cbd5e1; max-width: 800px; margin: 0 auto; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 3rem 2rem; }
+
+        /* --- TARJETAS DE INDICADORES (KPIs) --- */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .kpi-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+        .kpi-card:hover { transform: translateY(-5px); }
+
+        .kpi-title { font-size: 1rem; color: var(--text-dark); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+        .kpi-value { font-size: 3rem; font-weight: 700; color: var(--primary-color); line-height: 1; margin-bottom: 0.5rem; }
+        .kpi-baseline { font-size: 0.9rem; color: #64748b; }
+        
+        .kpi-value.danger { color: var(--danger-color); }
+        .kpi-value.success { color: var(--success-color); }
+
+        /* --- SECCIÓN ACCIONES CORRECTIVAS --- */
+        .control-panel {
+            background-color: var(--white);
+            border-left: 5px solid var(--accent-color);
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 4rem;
+        }
+
+        .control-title { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-color); }
+
+        /* --- SECCIÓN CONCLUSIONES --- */
+        .conclusions-section {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: var(--white);
+            padding: 3rem;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .conclusions-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 5px;
+            background: var(--accent-color);
+        }
+
+        .conclusions-section h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+        .conclusions-section p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 1rem; }
+
+        footer { background-color: var(--white); border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.9rem; color: #64748b; margin-top: auto;}
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">LSS <span>PROJECT</span></div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="definir.html">Definir</a></li>
+                    <li><a href="medir.html">Medir</a></li>
+                    <li><a href="analizar.html">Analizar</a></li>
+                    <li><a href="mejorar.html">Mejorar</a></li>
+                    <li><a href="controlar.html" class="active">Controlar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <h1>4.5. Controlar</h1>
+        <p>Plan de Sostenibilidad y Monitoreo de Indicadores Clave</p>
+    </div>
+
+    <div class="container">
+
+        <h2 style="margin-bottom: 1.5rem; color: var(--primary-color); border-bottom: 2px solid var(--border); padding-bottom: 0.5rem;">4.5.1. Indicadores de Desempeño</h2>
+        <p style="margin-bottom: 2rem; color: var(--text-dark);">
+            Para garantizar la efectividad de las mejoras, se implementará un monitoreo continuo comparando los resultados anuales con la línea base establecida en el diagnóstico de 2025.
+        </p>
+        
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-title">Tasa de Aprobación Objetivo</div>
+                <div class="kpi-value success">> 8.5%</div>
+                <div class="kpi-baseline">Línea Base 2025: 8.5%</div>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-light);">
+                    Cualquier desviación negativa activará acciones correctivas inmediatas para asegurar la sostenibilidad.
+                </p>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-title">DPMO Actual</div>
+                <div class="kpi-value danger">964.285</div>
+                <div class="kpi-baseline">Defectos por Millón de Oportunidades</div>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-light);">
+                    Indicador clave para evaluar el rendimiento de las medidas y la reducción de errores.
+                </p>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <h3 class="control-title">Medidas Correctivas</h3>
+            <p>
+                En caso de desviaciones, se recomienda realizar un <strong>estudio de procesos</strong> basado en:
+            </p>
+            <ul style="padding-left: 1.5rem; margin-top: 1rem; color: var(--text-dark);">
+                <li style="margin-bottom: 0.5rem;"><strong>Datos Cuantitativos:</strong> Análisis de métricas duras y variabilidad.</li>
+                <li style="margin-bottom: 0.5rem;"><strong>Información Cualitativa:</strong> Retroalimentación de evaluadores y usuarios.</li>
+            </ul>
+            <p style="margin-top: 1rem;">
+                El objetivo final es ajustar y optimizar el proceso de manera ágil.
+            </p>
+        </div>
+
+        <div class="conclusions-section">
+            <h2>5. Conclusiones</h2>
+            <p>
+                [Aquí puedes insertar el texto final de tus conclusiones. Por ejemplo: "El proyecto Lean Six Sigma ha demostrado que mediante la estandarización y digitalización de los procesos de postulación, es posible reducir significativamente la carga administrativa y mejorar la tasa de aprobación técnica..."]
+            </p>
+            <p>
+                [Resume los logros principales, aprendizajes clave y los siguientes pasos estratégicos para la organización.]
+            </p>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Abraham Castro. Licenciado en Ciencias de la Ingeniería</p>
+    </footer>
+
+</body>
+</html>

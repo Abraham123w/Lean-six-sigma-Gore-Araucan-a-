@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente de Formulación GORE</title>
+    <style>
+        :root {
+            --primary: #003366; /* Azul Institucional */
+            --secondary: #e63946; /* Alerta */
+            --success: #2a9d8f;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --border: #e9ecef;
+            --json-color: #5b2c6f; /* Color para botón JSON */
+        }
+
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: #333; padding: 20px; line-height: 1.5; }
+        .container { max-width: 900px; margin: 0 auto; background: var(--card); padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { color: var(--primary); text-align: center; margin-bottom: 10px; }
+        .sub-header { text-align: center; color: #666; margin-bottom: 30px; font-size: 0.9em; }
+
+        .step-container { border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 25px; background: #fff; border-left: 5px solid var(--primary); }
+        .step-title { font-size: 1.2em; font-weight: bold; color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; }
+        .step-number { background: var(--primary); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 0.9em; }
+
+        .guided-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: span 2; }
+        
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9em; color: #555; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.95em; }
+        input:focus, textarea:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px rgba(0,51,102,0.1); }
+        
+        /* Highlight para el campo autocompletado */
+        .auto-field { background-color: #f0f8ff; border-color: #b0c4de; color: #003366; font-weight: 500; }
+
+        .preview-box { background: #f1f8ff; padding: 15px; border-radius: 6px; margin-top: 15px; border: 1px dashed var(--primary); }
+        .preview-label { font-size: 0.8em; text-transform: uppercase; color: #777; margin-bottom: 5px; font-weight: bold; }
+        .preview-content { font-style: italic; color: #333; white-space: pre-wrap; }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-add { background: var(--success); color: white; }
+        .btn-del { background: var(--secondary); color: white; padding: 5px 10px; font-size: 0.8em; margin-left: 10px; }
+        
+        /* Footer de acciones */
+        .actions-footer { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
+        
+        .btn-download { background: var(--primary); color: white; flex: 1; font-size: 1.1em; padding: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-download:hover { background: #002244; }
+
+        .btn-json { background: var(--json-color); color: white; flex: 1; font-size: 1.1em; padding: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-json:hover { background: #4a235a; }
+
+        .alert-box { background: #fff3cd; color: #856404; padding: 15px; border-radius: 4px; border-left: 5px solid #ffc107; margin-bottom: 20px; font-size: 0.9em; }
+
+        @media (max-width: 600px) { .guided-grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } .actions-footer { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Asistente de Formulación de Iniciativas</h1>
+    <p class="sub-header">Generador basado en Anexo N° 1 del Manual de Procedimientos</p>
+
+    <div class="alert-box">
+        <strong>⚠️ REGLA DE ORO (Anti-Rechazo):</strong> El sistema bloqueará palabras como "falta de construcción", "compra", "taller". Debe describir la carencia o dolor, no la falta de la solución.
+    </div>
+
+    <form id="mainForm">
+
+        <div class="step-container">
+            <div class="step-title"><span class="step-number">1</span> Diagnóstico (Situación Actual)</div>
+            <p style="font-size:0.9em; color:#666; margin-bottom:15px;">Responda estas preguntas y el sistema redactará el diagnóstico por usted.</p>
+            
+            <div class="guided-grid">
+                <div>
+                    <label>1. ¿Dónde ocurre? (Territorio específico)</label>
+                    <input type="text" id="d_lugar" placeholder="Ej: Sector rural de la comuna de Nueva Imperial" oninput="actualizarTodo()">
+                </div>
+                <div>
+                    <label>2. ¿Quiénes son los afectados?</label>
+                    <input type="text" id="d_sujeto" placeholder="Ej: 300 familias de comunidades indígenas" oninput="actualizarTodo()">
+                </div>
+                <div class="full-width">
+                    <label>3. ¿Cuál es la situación negativa actual? (Describa el hecho)</label>
+                    <textarea id="d_situacion" rows="2" placeholder="Ej: consumen agua de pozos no potabilizados con altos niveles de turbiedad" oninput="actualizarTodo()"></textarea>
+                </div>
+                <div>
+                    <label>4. Dato Duro (Cuantitativo)</label>
+                    <input type="text" id="d_dato" placeholder="Ej: El 45% de las muestras superan la norma" oninput="actualizarTodo()">
+                </div>
+                <div>
+                    <label>5. Fuente del Dato (Obligatorio)</label>
+                    <input type="text" id="d_fuente" placeholder="Ej: Informe Seremi Salud 2024" oninput="actualizarTodo()">
+                </div>
+            </div>
+
+            <div class="preview-box">
+                <div class="preview-label">Borrador Generado Automáticamente:</div>
+                <div id="preview_diagnostico" class="preview-content">Complete los campos arriba para ver el borrador...</div>
+            </div>
+        </div>
+
+        <div class="step-container">
+            <div class="step-title"><span class="step-number">2</span> Problema Central</div>
+            <p style="font-size:0.9em; color:#666;">Definición concreta de la situación negativa central.</p>
+
+            <div class="guided-grid">
+                <div>
+                    <label>Condición Negativa (Sustantivo + Adjetivo)</label>
+                    <input type="text" id="p_condicion" placeholder="Ej: Alta incidencia / Deficiente acceso" oninput="generarProblema()">
+                </div>
+                <div>
+                    <label>¿De qué tema?</label>
+                    <input type="text" id="p_tema" placeholder="Ej: de enfermedades gastrointestinales" oninput="generarProblema()">
+                </div>
+                <div class="full-width">
+                    <label>Población y Lugar (Autocompletado)</label>
+                    <input type="text" id="p_poblacion" class="auto-field" placeholder="Se completará automáticamente..." oninput="generarProblema()">
+                    <small style="color:#888;">* Puede editar este campo manualmente si lo desea.</small>
+                </div>
+            </div>
+            
+            <div id="alerta-solucion" style="color: red; font-size: 0.8em; display: none; margin-top: 5px;">
+                ⚠️ Alerta: Parece que está proponiendo una solución ("falta de..."). Reformule como un problema existente.
+            </div>
+
+            <div class="preview-box">
+                <div class="preview-label">Árbol de Problemas - Tronco:</div>
+                <div id="preview_problema" class="preview-content" style="font-weight: bold; color: var(--primary);">...</div>
+            </div>
+        </div>
+
+        <div class="step-container">
+            <div class="step-title"><span class="step-number">3</span> Árbol: Causas y Efectos</div>
+            
+            <label>Causas (Raíces - El origen del problema)</label>
+            <div id="lista-causas">
+                <input type="text" class="input-causa" placeholder="Causa 1 (Ej: Consumo de agua contaminada)" style="margin-bottom: 5px; width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <button type="button" class="btn btn-add" onclick="agregarCampo('lista-causas', 'Causa')">+ Agregar Causa</button>
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+            <label>Efectos (Ramas - Las consecuencias)</label>
+            <div id="lista-efectos">
+                <input type="text" class="input-efecto" placeholder="Efecto 1 (Ej: Aumento de gastos médicos)" style="margin-bottom: 5px; width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <button type="button" class="btn btn-add" onclick="agregarCampo('lista-efectos', 'Efecto')">+ Agregar Efecto</button>
+        </div>
+
+        <div class="actions-footer">
+            <button type="button" class="btn btn-json" onclick="descargarJSON()">
+                💾 Guardar Datos (.json)
+            </button>
+            <button type="button" class="btn btn-download" onclick="descargarWord()">
+                📄 Descargar Word (.doc)
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<div id="export-content" style="display:none;">
+    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head><meta charset="utf-8"><title>Formulación Anexo 1</title></head>
+    <body>
+        <h1 style="color:#003366;">Anexo N° 1: Diagnóstico y Problema</h1>
+        
+        <h2 style="background:#eee; padding:5px;">3. Diagnóstico de la Situación Actual</h2>
+        <p><strong>Descripción:</strong></p>
+        <p id="word_diagnostico"></p>
+        
+        <h2 style="background:#eee; padding:5px;">3.1. Problema Central</h2>
+        <p style="font-size:14pt; font-weight:bold;" id="word_problema"></p>
+        
+        <h3 style="color:#003366;">Árbol de Problemas</h3>
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+            <tr>
+                <td style="background:#f0f0f0; padding:10px; width:50%; vertical-align:top;">
+                    <strong>CAUSAS (Origen)</strong>
+                    <ul id="word_causas"></ul>
+                </td>
+                <td style="background:#f0f0f0; padding:10px; width:50%; vertical-align:top;">
+                    <strong>EFECTOS (Consecuencias)</strong>
+                    <ul id="word_efectos"></ul>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <p style="font-size:9pt; color:#666;">Documento generado el: <span id="fecha_gen"></span></p>
+    </body>
+    </html>
+</div>
+
+<script>
+    // Variable para saber si el usuario ha editado manualmente el campo "Población y Lugar"
+    let poblacionManual = false;
+
+    // Detectar si el usuario edita el campo manualmente
+    document.getElementById('p_poblacion').addEventListener('input', function() {
+        if(this.value.trim() === "") {
+            poblacionManual = false;
+        } else {
+            poblacionManual = true;
+        }
+        generarProblema();
+    });
+
+    // Función principal que se llama desde los inputs del Paso 1
+    function actualizarTodo() {
+        generarDiagnostico();
+        actualizarPoblacionProblema();
+    }
+
+    function generarDiagnostico() {
+        const lugar = document.getElementById('d_lugar').value.trim();
+        const sujeto = document.getElementById('d_sujeto').value.trim();
+        const situacion = document.getElementById('d_situacion').value.trim();
+        const dato = document.getElementById('d_dato').value.trim();
+        const fuente = document.getElementById('d_fuente').value.trim();
+
+        let texto = "";
+        if (lugar) texto += `En ${lugar}, `;
+        if (sujeto) texto += `actualmente existe una población de ${sujeto} que `;
+        if (situacion) texto += `se encuentra en una situación caracterizada por ${situacion}. `;
+        if (dato) texto += `Esta problemática se evidencia cuantitativamente, ya que ${dato}. `;
+        if (fuente) texto += `(Fuente: ${fuente}).`;
+
+        document.getElementById('preview_diagnostico').innerText = texto || "Complete los campos...";
+        document.getElementById('word_diagnostico').innerText = texto;
+    }
+
+    function actualizarPoblacionProblema() {
+        const lugar = document.getElementById('d_lugar').value.trim();
+        const sujeto = document.getElementById('d_sujeto').value.trim();
+        const pobInput = document.getElementById('p_poblacion');
+
+        if (!poblacionManual) {
+            let sugerencia = "";
+            if (sujeto) sugerencia += "en " + sujeto;
+            if (lugar) sugerencia += (sujeto ? " " : "") + "de " + lugar;
+            pobInput.value = sugerencia;
+            generarProblema(); 
+        }
+    }
+
+    function generarProblema() {
+        const condicion = document.getElementById('p_condicion').value;
+        const tema = document.getElementById('p_tema').value;
+        const poblacion = document.getElementById('p_poblacion').value;
+
+        // Validación Regla de Oro
+        const prohibidas = ['falta', 'construcción', 'compra', 'adquisición', 'ausencia de sede', 'taller'];
+        const textoCheck = (condicion + " " + tema).toLowerCase();
+        let alerta = false;
+        prohibidas.forEach(p => {
+            if (textoCheck.includes(p)) alerta = true;
+        });
+        
+        document.getElementById('alerta-solucion').style.display = alerta ? 'block' : 'none';
+
+        const texto = `${condicion} ${tema} ${poblacion}`.trim();
+        document.getElementById('preview_problema').innerText = texto;
+        document.getElementById('word_problema').innerText = texto;
+    }
+
+    function agregarCampo(idContenedor, tipo) {
+        const div = document.createElement('div');
+        div.style.display = 'flex';
+        div.style.marginBottom = '5px';
+        div.innerHTML = `
+            <input type="text" class="input-${tipo.toLowerCase()}" placeholder="${tipo} adicional..." onchange="actualizarListasWord()" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <button type="button" class="btn btn-del" onclick="this.parentElement.remove(); actualizarListasWord()">X</button>
+        `;
+        document.getElementById(idContenedor).appendChild(div);
+    }
+
+    function actualizarListasWord() {
+        const causasInputs = document.querySelectorAll('.input-causa');
+        let htmlCausas = "";
+        causasInputs.forEach(input => { if(input.value) htmlCausas += `<li>${input.value}</li>`; });
+        document.getElementById('word_causas').innerHTML = htmlCausas;
+
+        const efectosInputs = document.querySelectorAll('.input-efecto');
+        let htmlEfectos = "";
+        efectosInputs.forEach(input => { if(input.value) htmlEfectos += `<li>${input.value}</li>`; });
+        document.getElementById('word_efectos').innerHTML = htmlEfectos;
+    }
+
+    function descargarWord() {
+        generarDiagnostico();
+        generarProblema();
+        actualizarListasWord();
+        document.getElementById('fecha_gen').innerText = new Date().toLocaleDateString();
+
+        var content = document.getElementById('export-content').innerHTML;
+        var blob = new Blob(['\ufeff', content], { type: 'application/msword' });
+        var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(content);
+        var link = document.createElement("a");
+        link.href = url;
+        link.download = "Formulacion_Iniciativa_" + new Date().getTime() + ".doc";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // --- NUEVA FUNCIÓN PARA DESCARGAR JSON ---
+    function descargarJSON() {
+        // Recopilamos las listas dinámicas
+        let causas = [];
+        document.querySelectorAll('.input-causa').forEach(inp => { if(inp.value) causas.push(inp.value) });
+        
+        let efectos = [];
+        document.querySelectorAll('.input-efecto').forEach(inp => { if(inp.value) efectos.push(inp.value) });
+
+        // Objeto con todos los datos
+        const datosFormulario = {
+            fecha_guardado: new Date().toISOString(),
+            diagnostico: {
+                lugar: document.getElementById('d_lugar').value,
+                sujeto: document.getElementById('d_sujeto').value,
+                situacion: document.getElementById('d_situacion').value,
+                dato: document.getElementById('d_dato').value,
+                fuente: document.getElementById('d_fuente').value,
+                texto_generado: document.getElementById('preview_diagnostico').innerText
+            },
+            problema: {
+                condicion: document.getElementById('p_condicion').value,
+                tema: document.getElementById('p_tema').value,
+                poblacion: document.getElementById('p_poblacion').value,
+                texto_generado: document.getElementById('preview_problema').innerText
+            },
+            arbol: {
+                causas: causas,
+                efectos: efectos
+            }
+        };
+
+        // Convertir a texto JSON
+        const jsonStr = JSON.stringify(datosFormulario, null, 2);
+        
+        // Crear blob y descargar
+        const blob = new Blob([jsonStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "Datos_Formulacion_" + new Date().getTime() + ".json";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+</body>
+</html>

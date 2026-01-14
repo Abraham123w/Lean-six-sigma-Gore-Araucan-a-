@@ -45,7 +45,7 @@
 
         .container { max-width: 1000px; margin: 0 auto; padding: 3rem 2rem; }
 
-        /* --- ESTILOS DE TARJETAS (SECCIÓN SUPERIOR) --- */
+        /* --- ESTILOS DE TARJETAS --- */
         .card {
             background: var(--white);
             border-radius: 12px;
@@ -75,7 +75,6 @@
         h3 { color: var(--secondary); font-size: 1.25rem; margin-bottom: 0.5rem; font-weight: 600; }
         p { margin-bottom: 1rem; color: #475569; }
 
-        /* Estilo para la Propuesta Principal */
         .proposal-box {
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: white;
@@ -100,22 +99,17 @@
             border-left: 4px solid var(--success);
             transition: background-color 0.3s;
         }
-        
-        .benefit-item:hover {
-            background-color: #f1f5f9;
-        }
-
+        .benefit-item:hover { background-color: #f1f5f9; }
         .benefit-item h4 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; font-weight: 700; }
         .benefit-item p { font-size: 0.9rem; margin-bottom: 0; color: #475569; }
 
-        /* Colores específicos para bordes de beneficios */
-        .b-waste { border-left-color: #ef4444; } /* Rojo - Reducción */
-        .b-time { border-left-color: #3b82f6; } /* Azul - Tiempo */
-        .b-feedback { border-left-color: #8b5cf6; } /* Violeta - Feedback */
-        .b-bottleneck { border-left-color: #f59e0b; } /* Naranja - Alerta */
-        .b-quality { border-left-color: #10b981; } /* Verde - Calidad */
+        .b-waste { border-left-color: #ef4444; }
+        .b-time { border-left-color: #3b82f6; }
+        .b-feedback { border-left-color: #8b5cf6; }
+        .b-bottleneck { border-left-color: #f59e0b; }
+        .b-quality { border-left-color: #10b981; }
 
-        /* --- ESTILOS TIMELINE (SECCIÓN INFERIOR) --- */
+        /* --- ESTILOS TIMELINE --- */
         .timeline-section-title {
             text-align: center;
             margin: 4rem 0 3rem;
@@ -203,19 +197,33 @@
             border: 1px dashed var(--border);
         }
 
-        .visual-placeholder {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: #f1f5f9;
-            border: 2px dashed #cbd5e1;
-            border-radius: 6px;
-            text-align: center;
-            color: #64748b;
-            font-size: 0.9rem;
-            display: flex;
+        /* --- BOTONES DE ACCIÓN (Prototipo y Llenado Guiado) --- */
+        .btn-prototype {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
+            gap: 8px;
+            background-color: var(--accent);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            transition: all 0.2s;
+        }
+        .btn-prototype:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Botón específico para Llenado Guiado (Fase 1) */
+        .btn-guided {
+            background-color: #059669; /* Verde para Fase 1 */
+        }
+        .btn-guided:hover {
+            background-color: #047857;
         }
 
         footer { background-color: var(--white); border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.9rem; color: #94748b; margin-top: auto;}
@@ -260,7 +268,6 @@
             <p>
                 Este diseño monolítico genera reprocesos relevantes, uso ineficiente de recursos técnicos y dificulta la identificación precisa de las etapas donde se producen demoras u observaciones recurrentes.
             </p>
-            
         </div>
 
         <div class="card">
@@ -280,10 +287,6 @@
                     <p>Los procesos deben minimizar la carga administrativa innecesaria (carga extraña) para concentrar el esfuerzo en la complejidad real del problema.</p>
                 </div>
             </div>
-            
-             <div class="visual-placeholder">
-                
-            </div>
         </div>
 
         <div class="card proposal-box">
@@ -295,9 +298,6 @@
             <p>
                 El avance a la etapa siguiente se encuentra condicionado a la aprobación formal de la anterior. Se evita el desarrollo completo de iniciativas que no superen validaciones iniciales de alineación, pertinencia o factibilidad.
             </p>
-            <div class="visual-placeholder" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: white;">
-                
-            </div>
         </div>
 
         <div class="card">
@@ -361,6 +361,11 @@
                         <div class="impact-box">
                             Impacto Esperado: Reducción inmediata de reprocesos por forma.
                         </div>
+
+                        <a href="llenadoguiado.html" class="btn-prototype btn-guided">
+                            Ver Llenado Guiado
+                        </a>
+
                     </div>
                 </div>
             </div>
@@ -377,9 +382,11 @@
                             <li><strong>Control Activo:</strong> Validaciones automáticas (Input Masks) que impiden errores.</li>
                             <li><strong>Datos Estructurados:</strong> Facilitan la trazabilidad y reutilización.</li>
                         </ul>
-                        <div class="visual-placeholder">
-                            
-                        </div>
+                        
+                        <a href="prototipo.html" class="btn-prototype">
+                            Ver Prototipo de Formulario
+                        </a>
+
                     </div>
                 </div>
             </div>

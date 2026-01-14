@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etapa 1: Filtro de Elegibilidad | GORE Araucanía</title>
+    <style>
+        :root {
+            --primary-color: #1565C0; /* Azul Institucional */
+            --secondary-color: #424242; /* Gris Oscuro */
+            --success-color: #2E7D32;
+            --error-color: #C62828; /* Rojo Ishikawa */
+            --bg-color: #F5F5F5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--secondary-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Header & Progress */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+        }
+
+        .stage-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            margin-top: 15px;
+            font-size: 1.8rem;
+        }
+
+        .rationale {
+            background-color: #e3f2fd;
+            border-left: 5px solid var(--primary-color);
+            padding: 15px;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            color: #0d47a1;
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+        }
+
+        .error-msg {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .btn-submit {
+            background-color: var(--success-color);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #1b5e20;
+        }
+
+        .btn-disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Grid for small inputs */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <span class="stage-badge">Etapa 1 de 7: Gate "Top-Down"</span>
+        <h1>Filtro de Elegibilidad Estratégica</h1>
+        <p>Validación normativa y alineación con Instrumentos de Planificación Regional (IPR).</p>
+    </div>
+
+    <div class="rationale">
+        <strong>Objetivo del Filtro:</strong> Evitar el inicio de proyectos con "Bases Ambiguas" o definidos arbitrariamente ("Top-Down") sin sustento normativo. Si no cumple con la admisibilidad legal y estratégica (Anexos 1 y 2), no podrá avanzar a la formulación del problema.
+    </div>
+
+    <form id="eligibilityForm" novalidate onsubmit="return validarFormulario(event)">
+
+        <div class="form-section">
+            <div class="section-title">
+                <span>1.</span> Admisibilidad Institucional
+            </div>
+            
+            <div class="form-group">
+                <label for="institucion">Nombre Institución Formuladora (Según Registro 19.862) *</label>
+                <input type="text" id="institucion" name="institucion" placeholder="Ej: Municipalidad de Temuco" required>
+                <span class="error-msg">Este campo es obligatorio.</span>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="rut_institucion">RUT Institución *</label>
+                    <input type="text" id="rut_institucion" name="rut_institucion" placeholder="12.345.678-9" onblur="checkRut(this)" required>
+                    <span class="error-msg" id="rut_error">RUT inválido. Formato: 11.111.111-1</span>
+                </div>
+                <div class="form-group">
+                    <label for="tipo_institucion">Tipo de Institución *</label>
+                    <select id="tipo_institucion" name="tipo_institucion" required>
+                        <option value="">Seleccione...</option>
+                        <option value="municipio">Municipalidad</option>
+                        <option value="servicio">Servicio Público Descentralizado</option>
+                        <option value="gore">Gobierno Regional</option>
+                        <option value="otra">Otra Entidad Pública Habilitada</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cert_fondo_publico">Certificado Registro Receptores Fondos Públicos (Ley 19.862) *</label>
+                <small style="display:block; margin-bottom:5px; color:#666;">Debe estar vigente a la fecha.</small>
+                <input type="file" id="cert_fondo_publico" name="cert_fondo_publico" accept=".pdf" required>
+                <span class="error-msg">Debe adjuntar el certificado en PDF.</span>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title">
+                <span>2.</span> Marco Presupuestario (Glosas Vigentes)
+            </div>
+            <div class="rationale" style="background-color: #fff3e0; border-color: #ff9800; color: #e65100;">
+                <strong>Control de Riesgo:</strong> Solo se permiten glosas habilitadas en la Ley de Presupuestos vigente (Fuente 30).
+            </div>
+
+            <div class="form-group">
+                <label for="glosa">Glosa Presupuestaria Asociada *</label>
+                <select id="glosa" name="glosa" required>
+                    <option value="">Seleccione Glosa...</option>
+                    <option value="02">Glosa 02 (Seguridad, Social, Rehab. Drogas, Cultura, Deportes)</option>
+                    <option value="06">Glosa 06 (Emergencias y Riesgos)</option>
+                    <option value="08">Glosa 08 (Bomberos)</option>
+                    <option value="11">Glosa 11 (Transporte / Subsidios)</option>
+                    <option value="13">Glosa 13 (Funcionamiento)</option>
+                    </select>
+                <span class="error-msg">Seleccione una glosa válida.</span>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title">
+                <span>3.</span> Vinculación con Instrumentos de Planificación (IPR)
+            </div>
+            <p style="font-size: 0.9rem; margin-bottom: 15px;">Seleccione el lineamiento principal de la Estrategia Regional de Desarrollo (ERD) que justifica esta iniciativa (Fuente 19).</p>
+
+            <div class="form-group">
+                <label for="ipr_lineamiento">Lineamiento / Eje Principal (ERD) *</label>
+                <select id="ipr_lineamiento" name="ipr_lineamiento" required onchange="validarJustificacion()">
+                    <option value="">Seleccione Eje Estratégico...</option>
+                    <option value="cohesion">Cohesión Social</option>
+                    <option value="crecimiento">Crecimiento Económico</option>
+                    <option value="sustentable">Desarrollo Sustentable, Ciudad y Territorios</option>
+                    <option value="identidad">Identidad Regional</option>
+                    <option value="institucionalidad">Institucionalidad Pública Regional</option>
+                    <option value="territorio">Objetivos y Líneas de Acción por Territorio</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="justificacion_estrategica">Justificación de la Vinculación (Máx. 500 caracteres) *</label>
+                <textarea id="justificacion_estrategica" name="justificacion_estrategica" rows="4" placeholder="Explique brevemente cómo la iniciativa responde al eje seleccionado..." maxlength="500" required></textarea>
+                <small id="charCount" style="float: right; color: #666;">0 / 500</small>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">Validar Elegibilidad y Pasar a Etapa 2</button>
+
+    </form>
+</div>
+
+<script>
+    // 1. Contador de Caracteres para evitar "Redacción Imprecisa"
+    const textArea = document.getElementById('justificacion_estrategica');
+    const charCount = document.getElementById('charCount');
+
+    textArea.addEventListener('input', function() {
+        const currentLength = this.value.length;
+        charCount.textContent = `${currentLength} / 500`;
+        if(currentLength < 20) {
+            charCount.style.color = 'red';
+        } else {
+            charCount.style.color = '#666';
+        }
+    });
+
+    // 2. Validador de RUT Chileno (Módulo 11)
+    function checkRut(rutInput) {
+        let valor = rutInput.value.replace(/\./g, '').replace(/-/g, '');
+        let cuerpo = valor.slice(0, -1);
+        let dv = valor.slice(-1).toUpperCase();
+        let rutError = document.getElementById('rut_error');
+
+        rutInput.value = formatearRut(valor);
+
+        if (cuerpo.length < 7) { 
+            rutInput.style.borderColor = "var(--error-color)";
+            rutError.style.display = "block";
+            return false; 
+        }
+
+        let suma = 0;
+        let multiplo = 2;
+
+        for (let i = 1; i <= cuerpo.length; i++) {
+            let index = multiplo * valor.charAt(cuerpo.length - i);
+            suma = suma + index;
+            if (multiplo < 7) { multiplo = multiplo + 1; } else { multiplo = 2; }
+        }
+
+        let dvEsperado = 11 - (suma % 11);
+        dvEsperado = (dvEsperado == 11) ? 0 : ((dvEsperado == 10) ? "K" : dvEsperado);
+
+        if (dvEsperado != dv) {
+            rutInput.style.borderColor = "var(--error-color)";
+            rutError.style.display = "block";
+            return false;
+        } else {
+            rutInput.style.borderColor = "var(--success-color)";
+            rutError.style.display = "none";
+            return true;
+        }
+    }
+
+    function formatearRut(rut) {
+        let actual = rut.replace(/^0+/, "");
+        if (actual != '' && actual.length > 1) {
+            let sinPuntos = actual.replace(/\./g, "").replace(/-/g, "");
+            let actualLimpio = sinPuntos.slice(0, -1);
+            let dv = sinPuntos.slice(-1);
+            
+            // Formatear con puntos y guión
+            if(actualLimpio.length > 3) {
+                 return actualLimpio.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "-" + dv;
+            }
+            return actual;
+        }
+        return rut;
+    }
+
+    // 3. Validación General del Formulario
+    function validarFormulario(event) {
+        event.preventDefault();
+        let isValid = true;
+        
+        // Validar RUT
+        const rutInput = document.getElementById('rut_institucion');
+        if (!checkRut(rutInput)) {
+            isValid = false;
+            rutInput.focus();
+            alert("Error: El RUT institucional no es válido.");
+            return false;
+        }
+
+        // Validar Archivos (Anti bases ambiguas)
+        const fileInput = document.getElementById('cert_fondo_publico');
+        if (fileInput.files.length === 0) {
+            isValid = false;
+            alert("Error: Debe adjuntar el Certificado de Registro (Ley 19.862) para asegurar admisibilidad.");
+            return false;
+        }
+
+        // Validar Justificación (Anti top-down sin argumento)
+        const justificacion = document.getElementById('justificacion_estrategica').value;
+        if (justificacion.length < 50) {
+            isValid = false;
+            alert("Error: La justificación estratégica es muy breve. Detalle la vinculación para evitar rechazo por 'Diagnóstico Subjetivo'.");
+            document.getElementById('justificacion_estrategica').focus();
+            return false;
+        }
+
+        if (isValid) {
+            // Simulación de éxito
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = "✅ Elegibilidad Validada. Redirigiendo a Etapa 2...";
+            btn.classList.add('btn-disabled');
+            // Aquí iría la lógica de envío al backend
+            console.log("Formulario válido. Datos listos para Etapa 2 (Definición del Problema).");
+            setTimeout(() => {
+                alert("¡Paso 1 Completado! El proyecto es elegible estratégica y legalmente. Ahora procederemos a la Validación del Problema.");
+            }, 1000);
+            return true;
+        }
+    }
+</script>
+
+</body>
+</html>

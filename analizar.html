@@ -53,17 +53,14 @@
             text-align: center;
             border: 1px solid var(--border);
         }
-        .ishikawa-placeholder {
-            background-color: #f1f5f9;
-            height: 350px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px dashed #94a3b8;
-            color: #64748b;
-            font-weight: 600;
-            border-radius: 6px;
-            margin-bottom: 1rem;
+        
+        /* Eliminé el placeholder y dejé estilos para la imagen por si acaso */
+        .ishikawa-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto 1rem auto;
         }
 
         /* --- GRID DE ANÁLISIS --- */
@@ -162,12 +159,8 @@
         <h2 class="section-title">4.3.1. Diagrama de Ishikawa Consolidado</h2>
         <div class="ishikawa-container">
             
-
-[Image of Fishbone diagram showing root causes]
-
-            <div class="ishikawa-placeholder">
-                [Imagen: Diagrama de Ishikawa / Espina de Pescado]
-            </div>
+            <img src="ishi.png" alt="Diagrama de Ishikawa - Causa Raíz" class="ishikawa-img">
+            
             <p style="font-size: 0.9rem; color: var(--text-light);">
                 Figura 2: Diagrama de Ishikawa consolidado, resaltando las ocho principales causas identificadas mediante el diagrama de Pareto.
             </p>
@@ -296,7 +289,8 @@
                 </div>
             </div>
 
-        </div> </div>
+        </div> 
+    </div>
 
     <footer>
         <p>&copy; 2026 Abraham Castro. Licenciado en Ciencias de la Ingeniería</p>

@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama de Pareto - Causas de Observaciones</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.0"></script>
+    <!-- Librerías para exportar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 5px solid #4a5568;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #2d3748, #4a5568);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f7fafc;
+        }
+
+        .chart-title {
+            color: #2d3748;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #edf2f7;
+            color: #4a5568;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        .btn.active {
+            background: #4299e1;
+            color: white;
+        }
+
+        .stats-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4299e1;
+        }
+
+        .stat-card.vital-few {
+            border-left-color: #48bb78;
+        }
+
+        .stat-card.useful-many {
+            border-left-color: #ed8936;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f7fafc;
+            color: #4a5568;
+            font-weight: 600;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .vital-few-row {
+            background: linear-gradient(90deg, #c6f6d5 0%, transparent 100%);
+        }
+
+        .category-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-vital {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge-useful {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .legend-text {
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .export-btn {
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .export-btns-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pdf-btn {
+            background: linear-gradient(90deg, #e53e3e, #c53030);
+        }
+
+        .pdf-btn:hover {
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.4);
+        }
+
+        .insights {
+            background: linear-gradient(90deg, #ebf8ff, #fff5f5);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #4299e1;
+        }
+
+        .insights h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .insights ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .insights li {
+            padding: 8px 0;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .insights li:before {
+            content: "✓";
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .export-btns-container {
+                flex-direction: column;
+            }
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #4a5568;
+            flex-direction: column;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4299e1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Estilos para impresión/PDF */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0;
+            }
+            
+            .export-btns-container,
+            .controls button,
+            .loading {
+                display: none !important;
+            }
+            
+            .container {
+                max-width: 100% !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+            }
+            
+            .header,
+            .chart-container,
+            .stats-container,
+            .table-container {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                margin-bottom: 20px !important;
+                page-break-inside: avoid;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+            
+            .footer {
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <span id="loadingText">Generando diagrama...</span>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Diagrama de Pareto - Análisis de Observaciones Text Minig</h1>
+            <p>Identificación de las causas principales que generan el 80% de las observaciones en iniciativas de inversión. Datos del año 2025.</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2 class="chart-title">Diagrama de Pareto Interactivo</h2>
+                    <div class="controls">
+                        <button class="btn active" onclick="switchView('frequency')">Frecuencia</button>
+                        <button class="btn" onclick="switchView('percentage')">Porcentaje</button>
+                        <button class="btn" onclick="exportChart()">Exportar PNG</button>
+                    </div>
+                </div>
+                <div style="position: relative; height: 400px;">
+                    <canvas id="paretoChart"></canvas>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #4299e1;"></div>
+                        <span class="legend-text">Frecuencia de Observaciones</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e53e3e;"></div>
+                        <span class="legend-text">Porcentaje Acumulado</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #48bb78;"></div>
+                        <span class="legend-text">Zona Vital Few (80/20)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <h2 class="chart-title">Estadísticas Clave</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalObservations">3,353</div>
+                        <div class="stat-label">Total de Observaciones</div>
+                    </div>
+                    <div class="stat-card vital-few">
+                        <div class="stat-value" id="vitalFewCount">6</div>
+                        <div class="stat-label">Causas "Vital Few"</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="top3Percent">53.1%</div>
+                        <div class="stat-label">Acumulado Top 3</div>
+                    </div>
+                    <div class="stat-card useful-many">
+                        <div class="stat-value" id="usefulManyCount">7</div>
+                        <div class="stat-label">Causas "Useful Many"</div>
+                    </div>
+                </div>
+                
+                <div class="insights">
+                    <h3>💡 Insights del Análisis</h3>
+                    <ul>
+                        <li>El 80% de las observaciones se concentra en solo 8 causas</li>
+                        <li>Top 3 causas representan más del 50% del total</li>
+                        <li>Claridad del beneficiario es la causa principal</li>
+                        <li>Recomendación: Enfocar recursos en causas Vital Few</li>
+                    </ul>
+                </div>
+                
+                <div class="export-btns-container">
+                    <button class="export-btn pdf-btn" onclick="exportPDF()">
+                        📥 Exportar Reporte en PDF
+                    </button>
+                    <button class="export-btn" onclick="exportReport()">
+                        📋 Exportar Reporte en TXT
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <h2 class="chart-title">📋 Resumen Analítico - Clasificación Pareto</h2>
+            <div class="table-wrapper">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Causa de Observación</th>
+                            <th>Frecuencia</th>
+                            <th>% Individual</th>
+                            <th>% Acumulado</th>
+                            <th>Categoría Pareto</th>
+                            <th>Recomendación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Datos se llenarán con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 - Análisis de Datos | Diagrama de Pareto Interactivo</p>
+            <p>Elaborado por alumno en práctica Abraham Castro Copa</p>
+        </div>
+    </div>
+
+    <script>
+        // Datos iniciales
+        const data = {
+            causas: [
+                'Claridad beneficiario',
+                'Validación del problema',
+                'Congruencia documental',
+                'Desalineamiento regional',
+                'Identificación de componentes',
+                'Integridad presupuestaria',
+                'Identificación del problema',
+                'Validación de componentes',
+                'Sin métricas',
+                'Otros',
+                'Identificación del propósito',
+                'Validación del propósito',
+                'Cumplimiento normativo'
+            ],
+            frecuencias: [417, 412, 348, 330, 272, 240, 225, 184, 157, 112, 110, 80, 76]
+        };
+
+        // Calcular estadísticas
+        let total = data.frecuencias.reduce((a, b) => a + b, 0);
+        let sortedData = [];
+        
+        // Crear array de objetos ordenado
+        for (let i = 0; i < data.causas.length; i++) {
+            sortedData.push({
+                causa: data.causas[i],
+                frecuencia: data.frecuencias[i]
+            });
+        }
+        
+        // Ordenar por frecuencia descendente
+        sortedData.sort((a, b) => b.frecuencia - a.frecuencia);
+        
+        // Calcular porcentajes y acumulados
+        let acumulado = 0;
+        let vitalFewIndex = -1;
+        
+        for (let i = 0; i < sortedData.length; i++) {
+            let porcentaje = (sortedData[i].frecuencia / total) * 100;
+            acumulado += porcentaje;
+            sortedData[i].porcentaje = porcentaje;
+            sortedData[i].acumulado = acumulado;
+            sortedData[i].indice = i + 1;
+            
+            // Encontrar donde se cruza el 80%
+            if (acumulado >= 80 && vitalFewIndex === -1) {
+                vitalFewIndex = i;
+            }
+        }
+
+        // Actualizar estadísticas en la interfaz
+        document.getElementById('totalObservations').textContent = total.toLocaleString();
+        document.getElementById('vitalFewCount').textContent = vitalFewIndex + 1;
+        document.getElementById('usefulManyCount').textContent = sortedData.length - (vitalFewIndex + 1);
+        document.getElementById('top3Percent').textContent = sortedData[2].acumulado.toFixed(1) + '%';
+
+        // Configurar gráfico
+        let currentView = 'frequency';
+        let paretoChart;
+
+        function initializeChart() {
+            const ctx = document.getElementById('paretoChart').getContext('2d');
+            
+            // Destruir gráfico anterior si existe
+            if (paretoChart) {
+                paretoChart.destroy();
+            }
+            
+            const labels = sortedData.map(d => d.causa);
+            const frequencies = sortedData.map(d => d.frecuencia);
+            const accumulated = sortedData.map(d => d.acumulado);
+            
+            paretoChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Frecuencia de Observaciones',
+                            data: frequencies,
+                            backgroundColor: 'rgba(66, 153, 225, 0.7)',
+                            borderColor: 'rgba(66, 153, 225, 1)',
+                            borderWidth: 2,
+                            borderRadius: 6,
+                            yAxisID: 'y',
+                            order: 2
+                        },
+                        {
+                            label: 'Porcentaje Acumulado',
+                            data: accumulated,
+                            type: 'line',
+                            borderColor: 'rgba(229, 62, 62, 1)',
+                            backgroundColor: 'rgba(229, 62, 62, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 6,
+                            pointBackgroundColor: 'white',
+                            pointBorderColor: 'rgba(229, 62, 62, 1)',
+                            pointBorderWidth: 2,
+                            fill: false,
+                            tension: 0.4,
+                            yAxisID: 'y1',
+                            order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label.includes('Frecuencia')) {
+                                        return `${label}: ${context.parsed.y.toLocaleString()}`;
+                                    } else {
+                                        return `${label}: ${context.parsed.y.toFixed(1)}%`;
+                                    }
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                line80: {
+                                    type: 'line',
+                                    yMin: 80,
+                                    yMax: 80,
+                                    borderColor: '#48bb78',
+                                    borderWidth: 2,
+                                    borderDash: [5, 5],
+                                    label: {
+                                        content: '80% - Regla Pareto',
+                                        enabled: true,
+                                        position: 'end',
+                                        backgroundColor: '#48bb78',
+                                        color: 'white',
+                                        font: {
+                                            size: 11,
+                                            weight: 'bold'
+                                        }
+                                    }
+                                },
+                                vitalZone: {
+                                    type: 'box',
+                                    xMin: -0.5,
+                                    xMax: vitalFewIndex + 0.5,
+                                    backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                                    borderColor: 'rgba(72, 187, 120, 0.3)',
+                                    borderWidth: 1,
+                                    label: {
+                                        content: 'Zona VITAL FEW',
+                                        enabled: true,
+                                        position: 'start',
+                                        yAdjust: -30,
+                                        backgroundColor: '#48bb78',
+                                        color: 'white',
+                                        font: {
+                                            size: 10,
+                                            weight: 'bold'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value, index) {
+                                    return `${index + 1}. ${this.getLabelForValue(value)}`;
+                                }
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Frecuencia de Observaciones',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                drawBorder: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Porcentaje Acumulado (%)',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Llenar tabla
+        function populateTable() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            
+            sortedData.forEach((item, index) => {
+                const isVitalFew = index <= vitalFewIndex;
+                const row = document.createElement('tr');
+                row.className = isVitalFew ? 'vital-few-row' : '';
+                
+                // Determinar recomendación basada en la categoría
+                let recomendacion = '';
+                if (isVitalFew) {
+                    recomendacion = 'ALTA PRIORIDAD - Asignar recursos inmediatos';
+                } else if (index === sortedData.length - 1) {
+                    recomendacion = 'BAJA PRIORIDAD - Mantener monitoreo';
+                } else {
+                    recomendacion = 'PRIORIDAD MEDIA - Planificar acciones a mediano plazo';
+                }
+                
+                row.innerHTML = `
+                    <td>${item.indice}</td>
+                    <td>${item.causa}</td>
+                    <td>${item.frecuencia.toLocaleString()}</td>
+                    <td>${item.porcentaje.toFixed(1)}%</td>
+                    <td>${item.acumulado.toFixed(1)}%</td>
+                    <td>
+                        <span class="category-badge ${isVitalFew ? 'badge-vital' : 'badge-useful'}">
+                            ${isVitalFew ? 'VITAL FEW' : 'USEFUL MANY'}
+                        </span>
+                    </td>
+                    <td>${recomendacion}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Cambiar vista
+        function switchView(view) {
+            currentView = view;
+            
+            // Actualizar botones
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'flex';
+            
+            // Simular carga y actualizar
+            setTimeout(() => {
+                if (view === 'percentage') {
+                    // Cambiar eje Y a porcentajes individuales
+                    paretoChart.data.datasets[0].label = 'Porcentaje Individual';
+                    paretoChart.data.datasets[0].data = sortedData.map(d => d.porcentaje);
+                    paretoChart.options.scales.y.title.text = 'Porcentaje Individual (%)';
+                    paretoChart.options.scales.y.ticks.callback = function(value) {
+                        return value + '%';
+                    };
+                } else {
+                    // Volver a frecuencia
+                    paretoChart.data.datasets[0].label = 'Frecuencia de Observaciones';
+                    paretoChart.data.datasets[0].data = sortedData.map(d => d.frecuencia);
+                    paretoChart.options.scales.y.title.text = 'Frecuencia de Observaciones';
+                    paretoChart.options.scales.y.ticks.callback = function(value) {
+                        return value.toLocaleString();
+                    };
+                }
+                
+                paretoChart.update();
+                document.getElementById('loading').style.display = 'none';
+            }, 300);
+        }
+
+        // Exportar gráfico como PNG
+        function exportChart() {
+            const link = document.createElement('a');
+            link.download = `pareto-chart-${new Date().toISOString().split('T')[0]}.png`;
+            link.href = document.getElementById('paretoChart').toDataURL('image/png');
+            link.click();
+        }
+
+        // Exportar reporte en PDF
+        function exportPDF() {
+            const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loadingText');
+            
+            loadingText.textContent = 'Generando PDF...';
+            loading.style.display = 'flex';
+            
+            // Capturar el contenido HTML
+            const element = document.querySelector('.container');
+            
+            // Configuración para html2canvas
+            const options = {
+                scale: 2, // Mejor calidad
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+                windowWidth: element.scrollWidth,
+                windowHeight: element.scrollHeight
+            };
+            
+            // Usar html2canvas para capturar la página
+            html2canvas(element, options).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new window.jspdf.jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                const imgWidth = 210; // Ancho A4 en mm
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                
+                // Agregar imagen al PDF
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                
+                // Agregar página de metadatos
+                pdf.addPage();
+                
+                // Título y metadatos
+                pdf.setFontSize(20);
+                pdf.text('Reporte de Análisis Pareto', 105, 20, { align: 'center' });
+                
+                pdf.setFontSize(12);
+                pdf.text(`Fecha de generación: ${new Date().toLocaleDateString()}`, 20, 40);
+                pdf.text(`Hora de generación: ${new Date().toLocaleTimeString()}`, 20, 50);
+                
+                pdf.setFontSize(14);
+                pdf.text('Resumen Estadístico:', 20, 70);
+                
+                pdf.setFontSize(12);
+                pdf.text(`• Total de observaciones: ${total.toLocaleString()}`, 25, 85);
+                pdf.text(`• Causas "Vital Few": ${vitalFewIndex + 1}`, 25, 95);
+                pdf.text(`• Causas "Useful Many": ${sortedData.length - (vitalFewIndex + 1)}`, 25, 105);
+                pdf.text(`• Porcentaje acumulado Top 3: ${sortedData[2].acumulado.toFixed(1)}%`, 25, 115);
+                
+                pdf.setFontSize(14);
+                pdf.text('Recomendaciones:', 20, 135);
+                
+                pdf.setFontSize(12);
+                pdf.text('1. Enfocar recursos en las causas "Vital Few"', 25, 150);
+                pdf.text('2. Implementar planes de acción específicos', 25, 160);
+                pdf.text('3. Establecer métricas de seguimiento', 25, 170);
+                pdf.text('4. Revisar periódicamente el análisis', 25, 180);
+                
+                // Pie de página
+                pdf.setFontSize(10);
+                pdf.text('© 2025 - Análisis de Datos | Diagrama de Pareto Interactivo', 105, 280, { align: 'center' });
+                pdf.text('Elaborado por alumno en práctica Abraham Castro Copa', 105, 285, { align: 'center' });
+                
+                // Guardar PDF
+                pdf.save(`reporte-pareto-${new Date().toISOString().split('T')[0]}.pdf`);
+                
+                // Ocultar loading
+                loading.style.display = 'none';
+                
+                // Mostrar mensaje de éxito
+                alert('✅ Reporte PDF generado exitosamente');
+            }).catch(error => {
+                console.error('Error al generar PDF:', error);
+                loading.style.display = 'none';
+                alert('❌ Error al generar el PDF. Por favor, intente nuevamente.');
+            });
+        }
+
+        // Exportar reporte en TXT
+        function exportReport() {
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('loadingText').textContent = 'Generando reporte...';
+            
+            setTimeout(() => {
+                const reportContent = `
+                    REPORTE DE ANÁLISIS PARETO
+                    Fecha: ${new Date().toLocaleDateString()}
+                    Hora: ${new Date().toLocaleTimeString()}
+                    
+                    ===========================================
+                    
+                    RESUMEN ESTADÍSTICO:
+                    - Total de observaciones: ${total.toLocaleString()}
+                    - Causas "Vital Few": ${vitalFewIndex + 1}
+                    - Causas "Useful Many": ${sortedData.length - (vitalFewIndex + 1)}
+                    - Porcentaje acumulado Top 3: ${sortedData[2].acumulado.toFixed(1)}%
+                    
+                    ===========================================
+                    
+                    DETALLE POR CAUSA:
+                    ${sortedData.map(item => 
+                        `${item.indice}. ${item.causa}
+                         Frecuencia: ${item.frecuencia.toLocaleString()}
+                         Porcentaje: ${item.porcentaje.toFixed(1)}%
+                         Acumulado: ${item.acumulado.toFixed(1)}%
+                         Categoría: ${item.indice <= vitalFewIndex + 1 ? 'VITAL FEW' : 'USEFUL MANY'}
+                         ------------------`
+                    ).join('\n')}
+                    
+                    ===========================================
+                    
+                    RECOMENDACIONES:
+                    1. Enfocar recursos en las primeras ${vitalFewIndex + 1} causas (Vital Few)
+                    2. Implementar plan de acción específico para cada causa prioritaria
+                    3. Establecer métricas de seguimiento para medir mejora
+                    4. Revisar periódicamente la distribución Pareto
+                    
+                    ===========================================
+                    
+                    © 2025 - Análisis de Datos 
+                    Generado automáticamente por el sistema de análisis Pareto
+                `;
+                
+                const blob = new Blob([reportContent], { type: 'text/plain' });
+                const link = document.createElement('a');
+                link.download = `reporte-pareto-${new Date().toISOString().split('T')[0]}.txt`;
+                link.href = URL.createObjectURL(blob);
+                link.click();
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                // Mostrar mensaje de éxito
+                alert('✅ Reporte TXT descargado exitosamente');
+            }, 1000);
+        }
+
+        // Agregar interactividad a las barras
+        function addChartInteractivity() {
+            const canvas = document.getElementById('paretoChart');
+            canvas.onclick = function(evt) {
+                const points = paretoChart.getElementsAtEventForMode(
+                    evt, 'nearest', { intersect: true }, true
+                );
+                
+                if (points.length) {
+                    const firstPoint = points[0];
+                    const index = firstPoint.index;
+                    const causa = sortedData[index];
+                    
+                    // Resaltar la barra clickeada
+                    paretoChart.data.datasets[0].backgroundColor = 
+                        paretoChart.data.datasets[0].backgroundColor.map((color, i) => 
+                            i === index ? 'rgba(245, 158, 11, 0.8)' : color
+                        );
+                    paretoChart.update();
+                    
+                    // Mostrar información detallada
+                    alert(`🔍 Causa seleccionada:
+                    
+${causa.indice}. ${causa.causa}
+Frecuencia: ${causa.frecuencia.toLocaleString()}
+Porcentaje del total: ${causa.porcentaje.toFixed(1)}%
+Porcentaje acumulado: ${causa.acumulado.toFixed(1)}%
+Categoría: ${index <= vitalFewIndex ? 'VITAL FEW' : 'USEFUL MANY'}
+
+${index <= vitalFewIndex ? '🚨 ALTA PRIORIDAD - Requiere atención inmediata' : '📋 PRIORIDAD MEDIA/BAJA'}`);
+                    
+                    // Restaurar colores después de 1 segundo
+                    setTimeout(() => {
+                        paretoChart.data.datasets[0].backgroundColor = 
+                            paretoChart.data.datasets[0].backgroundColor.map((color, i) => 
+                                i === index ? 'rgba(66, 153, 225, 0.7)' : color
+                            );
+                        paretoChart.update();
+                    }, 1000);
+                }
+            };
+        }
+
+        // Inicializar aplicación
+        window.onload = function() {
+            initializeChart();
+            populateTable();
+            addChartInteractivity();
+            
+            // Simular carga inicial
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+            }, 500);
+        };
+    </script>
+</body>
+</html>

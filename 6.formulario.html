@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etapa 6: Presupuesto y Valorización | GORE Araucanía</title>
+    <style>
+        :root {
+            --primary-color: #1565C0; /* Azul GORE */
+            --money-color: #2E7D32; /* Verde Finanzas */
+            --error-color: #C62828;
+            --bg-color: #F5F5F5;
+            --table-header: #ECEFF1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stage-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        /* Tablas de Presupuesto */
+        .budget-section {
+            margin-bottom: 40px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background-color: var(--table-header);
+            padding: 15px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #fafafa;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        /* Inputs financieros */
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: right;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"] { text-align: left; }
+
+        input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .col-qty { width: 80px; }
+        .col-price { width: 140px; }
+        .col-total { width: 140px; font-weight: bold; background-color: #f9fbe7; text-align: right;}
+        .col-action { width: 50px; text-align: center; }
+
+        .btn-add-row {
+            background: none;
+            border: 1px dashed #999;
+            color: #666;
+            padding: 8px 15px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .btn-add-row:hover { background-color: #f0f0f0; color: #333; }
+
+        .btn-remove {
+            color: var(--error-color);
+            cursor: pointer;
+            font-weight: bold;
+            background: none;
+            border: none;
+        }
+
+        /* Panel de Control de Totales */
+        .summary-panel {
+            background-color: #E8F5E9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 2px solid var(--money-color);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .total-big {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--money-color);
+            border-top: 2px solid #ccc;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        /* Validadores Visuales */
+        .limit-bar-container {
+            margin-top: 10px;
+            background-color: #ddd;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .limit-bar {
+            height: 100%;
+            background-color: var(--money-color);
+            width: 0%;
+            transition: width 0.5s, background-color 0.5s;
+        }
+
+        .limit-label {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .alert-limit {
+            color: var(--error-color);
+            font-weight: bold;
+            display: none;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 30px;
+        }
+        
+        .btn-disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <span class="stage-badge">Etapa 6 de 7: Gate "Estructura de Costos"</span>
+        <h1>Valorización y Presupuesto Detallado</h1>
+        <p>Asignación de precios de mercado según Anexo N° 4.</p>
+    </div>
+
+    <form id="budgetForm" onsubmit="return validarPresupuesto(event)">
+
+        <div class="budget-section">
+            <div class="section-header">
+                1. Contratación del Programa (Operación Directa)
+                <span id="subtotal-1">M$ 0</span>
+            </div>
+            <table id="table-program">
+                <thead>
+                    <tr>
+                        <th>Descripción (Recurso Humano / Bien)</th>
+                        <th>Unidad</th>
+                        <th class="col-qty">Cant.</th>
+                        <th class="col-price">Precio Unit. ($)</th>
+                        <th class="col-total">Total ($)</th>
+                        <th class="col-action"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" placeholder="Ej: Coordinador del Proyecto" required></td>
+                        <td><input type="text" value="Mes" style="width:60px;"></td>
+                        <td><input type="number" value="12" min="1" oninput="calculateRow(this)"></td>
+                        <td><input type="number" placeholder="0" min="0" oninput="calculateRow(this)"></td>
+                        <td class="col-total">0</td>
+                        <td><button type="button" class="btn-remove" onclick="removeRow(this)">X</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" class="btn-add-row" onclick="addRow('table-program')">+ Agregar Recurso</button>
+        </div>
+
+        <div class="budget-section">
+            <div class="section-header">
+                2. Consultorías (Expertos Específicos)
+                <span id="subtotal-2">M$ 0</span>
+            </div>
+            <table id="table-consulting">
+                <thead>
+                    <tr>
+                        <th>Descripción (Experto / Servicio)</th>
+                        <th>Unidad</th>
+                        <th class="col-qty">Cant.</th>
+                        <th class="col-price">Precio Unit. ($)</th>
+                        <th class="col-total">Total ($)</th>
+                        <th class="col-action"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                     <tr>
+                        <td><input type="text" placeholder="Ej: Asesoría Legal" required></td>
+                        <td><input type="text" value="Servicio" style="width:60px;"></td>
+                        <td><input type="number" placeholder="1" min="1" oninput="calculateRow(this)"></td>
+                        <td><input type="number" placeholder="0" min="0" oninput="calculateRow(this)"></td>
+                        <td class="col-total">0</td>
+                        <td><button type="button" class="btn-remove" onclick="removeRow(this)">X</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" class="btn-add-row" onclick="addRow('table-consulting')">+ Agregar Consultoría</button>
+        </div>
+
+        <div class="budget-section" style="border-color: #FFB74D;">
+            <div class="section-header" style="background-color: #FFF3E0; color: #E65100;">
+                3. Gastos Administrativos (Limitado al 5%)
+                <span id="subtotal-3">M$ 0</span>
+            </div>
+            <table id="table-admin">
+                <thead>
+                    <tr>
+                        <th>Descripción (Materiales, Servicios Básicos)</th>
+                        <th>Unidad</th>
+                        <th class="col-qty">Cant.</th>
+                        <th class="col-price">Precio Unit. ($)</th>
+                        <th class="col-total">Total ($)</th>
+                        <th class="col-action"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                     <tr>
+                        <td><input type="text" placeholder="Ej: Material de Oficina" required></td>
+                        <td><input type="text" value="Global" style="width:60px;"></td>
+                        <td><input type="number" placeholder="1" min="1" oninput="calculateRow(this)"></td>
+                        <td><input type="number" placeholder="0" min="0" oninput="calculateRow(this)"></td>
+                        <td class="col-total">0</td>
+                        <td><button type="button" class="btn-remove" onclick="removeRow(this)">X</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" class="btn-add-row" onclick="addRow('table-admin')">+ Agregar Gasto Admin</button>
+        </div>
+
+        <div class="summary-panel">
+            <div class="summary-row">
+                <span>Subtotal Operacional (Ítems 1 + 2):</span>
+                <span id="val-operational">0</span>
+            </div>
+            <div class="summary-row" style="color: #E65100;">
+                <span>Subtotal Administrativo (Ítem 3):</span>
+                <span id="val-admin">0</span>
+            </div>
+            
+            <div class="limit-bar-container">
+                <div id="admin-bar" class="limit-bar"></div>
+            </div>
+            <div class="limit-label">
+                <span id="admin-percent">0% utilizado</span>
+                <span>Máximo permitido: 5% del Total</span>
+            </div>
+            <div id="limit-error" class="alert-limit">
+                ⛔ ERROR: Los Gastos Administrativos superan el 5% permitido. Reduzca el Ítem 3.
+            </div>
+
+            <div class="summary-row total-big">
+                <span>TOTAL GENERAL SOLICITADO:</span>
+                <span id="val-total">0</span>
+            </div>
+        </div>
+
+        <button type="submit" id="btn-submit" class="btn-submit btn-disabled" disabled>Validar Presupuesto y Finalizar (Etapa 7)</button>
+
+    </form>
+</div>
+
+<script>
+    // Formateador de moneda (Peso Chileno)
+    const formatter = new Intl.NumberFormat('es-CL', {
+        style: 'currency',
+        currency: 'CLP',
+        minimumFractionDigits: 0
+    });
+
+    function addRow(tableId) {
+        const tbody = document.querySelector(`#${tableId} tbody`);
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" placeholder="Descripción..." required></td>
+            <td><input type="text" style="width:60px;"></td>
+            <td><input type="number" placeholder="1" min="1" oninput="calculateRow(this)"></td>
+            <td><input type="number" placeholder="0" min="0" oninput="calculateRow(this)"></td>
+            <td class="col-total">0</td>
+            <td><button type="button" class="btn-remove" onclick="removeRow(this)">X</button></td>
+        `;
+        tbody.appendChild(newRow);
+    }
+
+    function removeRow(btn) {
+        const row = btn.closest('tr');
+        row.remove();
+        updateTotals();
+    }
+
+    function calculateRow(input) {
+        const row = input.closest('tr');
+        const qty = parseFloat(row.querySelector('td:nth-child(3) input').value) || 0;
+        const price = parseFloat(row.querySelector('td:nth-child(4) input').value) || 0;
+        const total = qty * price;
+        
+        // Guardamos el valor numérico en un atributo data para sumar fácil
+        const totalCell = row.querySelector('.col-total');
+        totalCell.innerText = formatter.format(total);
+        totalCell.setAttribute('data-value', total);
+        
+        updateTotals();
+    }
+
+    function getTableTotal(tableId) {
+        let sum = 0;
+        const cells = document.querySelectorAll(`#${tableId} .col-total`);
+        cells.forEach(cell => {
+            sum += parseFloat(cell.getAttribute('data-value')) || 0;
+        });
+        return sum;
+    }
+
+    function updateTotals() {
+        const t1 = getTableTotal('table-program');
+        const t2 = getTableTotal('table-consulting');
+        const t3 = getTableTotal('table-admin');
+
+        // Actualizar subtotales visuales
+        document.getElementById('subtotal-1').innerText = formatter.format(t1);
+        document.getElementById('subtotal-2').innerText = formatter.format(t2);
+        document.getElementById('subtotal-3').innerText = formatter.format(t3);
+
+        const totalOperational = t1 + t2;
+        const totalGeneral = t1 + t2 + t3;
+
+        document.getElementById('val-operational').innerText = formatter.format(totalOperational);
+        document.getElementById('val-admin').innerText = formatter.format(t3);
+        document.getElementById('val-total').innerText = formatter.format(totalGeneral);
+
+        // Validar Regla del 5%
+        // Regla: Admin <= 5% del TOTAL GENERAL (Según Anexo 4)
+        const percent = totalGeneral > 0 ? (t3 / totalGeneral) * 100 : 0;
+        const bar = document.getElementById('admin-bar');
+        const percentText = document.getElementById('admin-percent');
+        const errorMsg = document.getElementById('limit-error');
+        const btn = document.getElementById('btn-submit');
+
+        bar.style.width = Math.min(percent, 100) + '%';
+        percentText.innerText = percent.toFixed(2) + '% utilizado';
+
+        if (percent > 5) {
+            bar.style.backgroundColor = 'var(--error-color)';
+            errorMsg.style.display = 'block';
+            btn.disabled = true;
+            btn.classList.add('btn-disabled');
+            btn.innerText = "❌ Presupuesto Inválido (Excede 5% Admin)";
+        } else {
+            bar.style.backgroundColor = 'var(--money-color)';
+            errorMsg.style.display = 'none';
+            
+            if (totalGeneral > 0) {
+                btn.disabled = false;
+                btn.classList.remove('btn-disabled');
+                btn.innerText = "Validar Presupuesto y Finalizar (Etapa 7)";
+            } else {
+                btn.disabled = true; // No permitir enviar en 0
+            }
+        }
+    }
+
+    function validarPresupuesto(event) {
+        event.preventDefault();
+        
+        // Validación final de campos vacíos
+        const inputs = document.querySelectorAll('input[required]');
+        let empty = false;
+        inputs.forEach(i => {
+            if(i.value.trim() === "") empty = true;
+        });
+
+        if(empty) {
+            alert("Por favor complete todas las descripciones de los gastos.");
+            return false;
+        }
+
+        const t3 = getTableTotal('table-admin');
+        const total = parseFloat(document.getElementById('val-total').innerText.replace(/[$.]/g, '')) || 0; // Des-formatear es complejo, mejor recalcular
+        
+        // Simulación de envío exitoso
+        const btn = document.getElementById('btn-submit');
+        btn.innerHTML = "✅ Presupuesto Aprobado. Generando Anexos...";
+        
+        setTimeout(() => {
+            alert("¡Felicidades! Ha completado la Etapa 6 sin errores de cálculo ni normativos.\n\nEl sistema ha generado automáticamente el Anexo N° 4.\n\nAhora pasaremos a la Etapa 7: Respaldo y Formalización (Carga de Cotizaciones).");
+        }, 1000);
+        
+        return true;
+    }
+</script>
+
+</body>
+</html>

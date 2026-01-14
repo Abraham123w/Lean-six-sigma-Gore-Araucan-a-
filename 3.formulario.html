@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etapa 3: Cuantificación de Demanda | GORE Araucanía</title>
+    <style>
+        :root {
+            --primary-color: #1565C0;
+            --secondary-color: #424242;
+            --calc-bg: #E3F2FD;
+            --error-color: #C62828;
+            --success-color: #2E7D32;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F5F5F5;
+            color: var(--secondary-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stage-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        /* Funnel Visuals */
+        .funnel-step {
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border-left: 6px solid #ccc;
+            background: #fff;
+            transition: all 0.3s;
+        }
+
+        .funnel-ref { border-color: #90A4AE; background-color: #ECEFF1; } /* Gris */
+        .funnel-pot { border-color: #FFB74D; background-color: #FFF3E0; margin-left: 20px; } /* Naranja */
+        .funnel-obj { border-color: #66BB6A; background-color: #E8F5E9; margin-left: 40px; } /* Verde */
+
+        .section-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .data-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 15px;
+        }
+
+        /* Territorial Matrix */
+        .matrix-container {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fafafa;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        th { background-color: #f1f1f1; }
+
+        .btn-add {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 30px;
+        }
+
+        .btn-submit:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .validation-error {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .calc-display {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <span class="stage-badge">Etapa 3 de 7: Gate "Línea Base"</span>
+        <h1>Cuantificación de Demanda</h1>
+        <p>Segmentación en cascada y desagregación territorial obligatoria.</p>
+    </div>
+
+    <form id="demandForm" onsubmit="return validarDemanda(event)">
+
+        <div class="funnel-step funnel-ref">
+            <div class="section-title">
+                1. Población de Referencia (El Universo)
+                <small style="color:#666; font-weight:normal;">Anexo 1 - Fuente 750</small>
+            </div>
+            <div class="data-row">
+                <div class="input-group">
+                    <label>Cantidad Total *</label>
+                    <input type="number" id="pop_ref" required min="1" onchange="checkLogic()">
+                </div>
+                <div class="input-group">
+                    <label>Fuente de Datos (Ej: Censo 2017, Proyección INE) *</label>
+                    <input type="text" id="source_ref" placeholder="Cite el documento oficial..." required>
+                </div>
+            </div>
+            <label>Descripción Geográfica</label>
+            <input type="text" placeholder="Ej: Habitantes de la Provincia de Malleco..." required>
+        </div>
+
+        <div class="funnel-step funnel-pot">
+            <div class="section-title">
+                2. Población Potencial (El Problema)
+                <small style="color:#666; font-weight:normal;">Anexo 1 - Fuente 752</small>
+            </div>
+            <p style="font-size: 0.85rem; margin-bottom:10px;">Es el subconjunto que sufre la carencia detectada en la Etapa 2.</p>
+            
+            <div class="data-row">
+                <div class="input-group">
+                    <label>Cantidad Afectada *</label>
+                    <input type="number" id="pop_pot" required min="1" onchange="checkLogic()">
+                    <div id="err_pot" class="validation-error">Error: La Población Potencial no puede ser mayor a la de Referencia.</div>
+                </div>
+                <div class="input-group">
+                    <label>Criterio de Inclusión (Filtro) *</label>
+                    <input type="text" placeholder="Ej: Adultos mayores sin red de agua potable..." required>
+                </div>
+            </div>
+        </div>
+
+        <div class="funnel-step funnel-obj">
+            <div class="section-title">
+                3. Población Objetivo (La Solución)
+                <small style="color:#666; font-weight:normal;">Anexo 1 - Fuente 758</small>
+            </div>
+            <p style="font-size: 0.85rem; margin-bottom:10px;">Desglose territorial obligatorio para evitar "Datos no territoriales" (Causa Ishikawa).</p>
+
+            <div class="matrix-container">
+                <div class="data-row" style="grid-template-columns: 1fr 1fr 1fr auto; align-items: end;">
+                    <div class="input-group">
+                        <label>Comuna (Anexo 2)</label>
+                        <select id="sel_comuna">
+                            <option value="">Seleccione...</option>
+                            <option value="Angol">Angol</option>
+                            <option value="Carahue">Carahue</option>
+                            <option value="Chol chol">Chol chol</option>
+                            <option value="Collipulli">Collipulli</option>
+                            <option value="Cunco">Cunco</option>
+                            <option value="Curacautín">Curacautín</option>
+                            <option value="Ercilla">Ercilla</option>
+                            <option value="Freire">Freire</option>
+                            <option value="Galvarino">Galvarino</option>
+                            <option value="Gorbea">Gorbea</option>
+                            <option value="Lautaro">Lautaro</option>
+                            <option value="Loncoche">Loncoche</option>
+                            <option value="Lonquimay">Lonquimay</option>
+                            <option value="Los Sauces">Los Sauces</option>
+                            <option value="Lumaco">Lumaco</option>
+                            <option value="Melipeuco">Melipeuco</option>
+                            <option value="Nueva Imperial">Nueva Imperial</option>
+                            <option value="Padre Las Casas">Padre Las Casas</option>
+                            <option value="Perquenco">Perquenco</option>
+                            <option value="Pitrufquén">Pitrufquén</option>
+                            <option value="Pucón">Pucón</option>
+                            <option value="Purén">Purén</option>
+                            <option value="Renaico">Renaico</option>
+                            <option value="Saavedra">Saavedra</option>
+                            <option value="Temuco">Temuco</option>
+                            <option value="Teodoro Schmidt">Teodoro Schmidt</option>
+                            <option value="Toltén">Toltén</option>
+                            <option value="Traiguén">Traiguén</option>
+                            <option value="Victoria">Victoria</option>
+                            <option value="Vilcún">Vilcún</option>
+                            <option value="Villarrica">Villarrica</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Hombres</label>
+                        <input type="number" id="in_hombres" min="0" placeholder="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Mujeres</label>
+                        <input type="number" id="in_mujeres" min="0" placeholder="0">
+                    </div>
+                    <div class="input-group">
+                        <button type="button" class="btn-add" onclick="addTerritory()">+ Agregar</button>
+                    </div>
+                </div>
+
+                <table id="territoryTable">
+                    <thead>
+                        <tr>
+                            <th>Comuna</th>
+                            <th>Hombres</th>
+                            <th>Mujeres</th>
+                            <th>Total</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                    <tfoot>
+                        <tr style="font-weight: bold; background-color: #e8f5e9;">
+                            <td>TOTAL OBJETIVO</td>
+                            <td id="total_men">0</td>
+                            <td id="total_women">0</td>
+                            <td id="total_obj">0</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <div id="err_obj" class="validation-error">Error: La Población Objetivo supera a la Potencial.</div>
+            </div>
+            
+            <div style="margin-top: 15px; padding: 10px; background: #E3F2FD; border-radius: 4px;">
+                <strong>Línea Base del Proyecto (Déficit): </strong>
+                <span id="gap_display" class="calc-display">0</span> personas quedarán sin cobertura (Brecha).
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn" disabled>Validar Cuantificación y Pasar a Etapa 4</button>
+
+    </form>
+</div>
+
+<script>
+    let territoryData = [];
+
+    function addTerritory() {
+        const comuna = document.getElementById('sel_comuna').value;
+        const hombres = parseInt(document.getElementById('in_hombres').value) || 0;
+        const mujeres = parseInt(document.getElementById('in_mujeres').value) || 0;
+
+        if (!comuna) { alert("Seleccione una comuna válida."); return; }
+        if (hombres === 0 && mujeres === 0) { alert("Ingrese al menos un beneficiario."); return; }
+
+        // Evitar duplicados
+        const exists = territoryData.find(t => t.comuna === comuna);
+        if (exists) {
+            alert("La comuna ya está en la lista. Elimínela si desea corregirla.");
+            return;
+        }
+
+        territoryData.push({ comuna, hombres, mujeres, total: hombres + mujeres });
+        renderTable();
+        
+        // Limpiar inputs
+        document.getElementById('sel_comuna').value = "";
+        document.getElementById('in_hombres').value = "";
+        document.getElementById('in_mujeres').value = "";
+        checkLogic();
+    }
+
+    function removeTerritory(index) {
+        territoryData.splice(index, 1);
+        renderTable();
+        checkLogic();
+    }
+
+    function renderTable() {
+        const tbody = document.querySelector('#territoryTable tbody');
+        tbody.innerHTML = "";
+        
+        let sumH = 0, sumM = 0, sumT = 0;
+
+        territoryData.forEach((item, index) => {
+            sumH += item.hombres;
+            sumM += item.mujeres;
+            sumT += item.total;
+
+            const row = `<tr>
+                <td>${item.comuna}</td>
+                <td>${item.hombres}</td>
+                <td>${item.mujeres}</td>
+                <td>${item.total}</td>
+                <td><button type="button" style="color:red; border:none; background:none; cursor:pointer;" onclick="removeTerritory(${index})">Eliminar</button></td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+
+        document.getElementById('total_men').innerText = sumH;
+        document.getElementById('total_women').innerText = sumM;
+        document.getElementById('total_obj').innerText = sumT;
+    }
+
+    function checkLogic() {
+        const ref = parseInt(document.getElementById('pop_ref').value) || 0;
+        const pot = parseInt(document.getElementById('pop_pot').value) || 0;
+        const obj = parseInt(document.getElementById('total_obj').innerText) || 0;
+        const btn = document.getElementById('submitBtn');
+
+        let valid = true;
+
+        // 1. Validar Cascada Ref >= Pot
+        const errPot = document.getElementById('err_pot');
+        if (pot > ref && ref > 0) {
+            errPot.style.display = "block";
+            valid = false;
+        } else {
+            errPot.style.display = "none";
+        }
+
+        // 2. Validar Cascada Pot >= Obj
+        const errObj = document.getElementById('err_obj');
+        if (obj > pot && pot > 0) {
+            errObj.style.display = "block";
+            valid = false;
+        } else {
+            errObj.style.display = "none";
+        }
+
+        // 3. Calcular Brecha
+        const gap = pot - obj;
+        const gapDisplay = document.getElementById('gap_display');
+        gapDisplay.innerText = gap > 0 ? gap : 0;
+
+        // Habilitar Botón
+        if (valid && ref > 0 && pot > 0 && obj > 0) {
+            btn.disabled = false;
+            btn.title = "Datos coherentes";
+        } else {
+            btn.disabled = true;
+            btn.title = "Corrija los errores de lógica demográfica";
+        }
+    }
+
+    function validarDemanda(event) {
+        event.preventDefault();
+        // Lógica final antes de enviar
+        const obj = parseInt(document.getElementById('total_obj').innerText);
+        if (obj === 0) {
+            alert("Debe agregar al menos una comuna con beneficiarios.");
+            return false;
+        }
+        
+        alert("¡Validación Exitosa! \n\nLínea Base definida correctamente. \nLa desagregación territorial cumple con el estándar del Anexo 1. \n\nAvanzando a Etapa 4: Marco Lógico.");
+        return true;
+    }
+</script>
+
+</body>
+</html>

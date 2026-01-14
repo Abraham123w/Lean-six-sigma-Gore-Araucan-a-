@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio | Portafolio Lean Six Sigma</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* VARIABLES DE ESTILO CORPORATIVO */
+        :root {
+            --primary-color: #0f172a; /* Azul marino muy oscuro (Slate 900) */
+            --accent-color: #2563eb;  /* Azul corporativo brillante */
+            --text-dark: #334155;     /* Gris oscuro para lectura */
+            --text-light: #64748b;    /* Gris medio para subtítulos */
+            --bg-light: #f8fafc;      /* Blanco humo */
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* HEADER / NAVEGACIÓN */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        .logo span {
+            color: var(--accent-color);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Botón activo (Home) */
+        nav a.active {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        /* HERO SECTION (Principal) */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1e293b 100%);
+            color: var(--white);
+            padding: 5rem 2rem;
+            text-align: center;
+            flex-grow: 1; /* Empuja el footer hacia abajo */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #cbd5e1; /* Gris azulado claro */
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: var(--white);
+            padding: 1rem 2.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .cta-button:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        /* SECCIÓN RESUMEN */
+        .summary {
+            background-color: var(--white);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .summary-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .summary h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .summary p {
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: var(--white);
+            border-top: 1px solid #e2e8f0;
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; height: auto; padding: 1rem; }
+            nav ul { margin-top: 1rem; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+            .hero h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">LSS <span>PROJECT</span></div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active">Inicio</a></li>
+                    <li><a href="definir.html">Definir</a></li>
+                    <li><a href="medir.html">Medir</a></li>
+                    <li><a href="analizar.html">Analizar</a></li>
+                    <li><a href="mejorar.html">Mejorar</a></li>
+                    <li><a href="controlar.html">Controlar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Optimización de Procesos <br>Lean Six Sigma</h1>
+            <p>
+                Un enfoque estructurado basado en datos para reducir la variabilidad, 
+                eliminar desperdicios y maximizar la eficiencia operativa.
+            </p>
+            <a href="definir.html" class="cta-button">Ver Metodología DMAIC</a>
+        </div>
+    </section>
+
+    <section class="summary">
+        <div class="summary-container">
+            <h2>Sobre el Proyecto</h2>
+            <p>
+                Este portafolio digital documenta la aplicación práctica de la metodología DMAIC
+                (Definir, Medir, Analizar, Mejorar, Controlar). Navegue a través de las etapas
+                utilizando el menú superior para ver en detalle las herramientas estadísticas
+                y de gestión utilizadas.
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Abraham Castro. Licenciado en Ciencias de la Ingeniería.</p>
+    </footer>
+
+</body>
+</html>

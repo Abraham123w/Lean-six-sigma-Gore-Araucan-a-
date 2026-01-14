@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etapa 2: Validación del Problema | GORE Araucanía</title>
+    <style>
+        :root {
+            --primary-color: #1565C0;
+            --secondary-color: #424242;
+            --warning-bg: #fff3e0;
+            --warning-text: #e65100;
+            --error-color: #C62828;
+            --tree-root: #795548; /* Café para causas */
+            --tree-leaf: #2E7D32; /* Verde para efectos */
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F5F5F5;
+            color: var(--secondary-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stage-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        /* Alerta Anti-Soluciones */
+        .alert-bias {
+            background-color: var(--warning-bg);
+            border-left: 5px solid var(--warning-text);
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            color: #bf360c;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+        }
+
+        .section-header {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        textarea:focus, input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+        }
+
+        .helper-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Estilos visuales del Árbol */
+        .tree-section {
+            border-left: 4px solid #ccc;
+            padding-left: 20px;
+        }
+        .tree-roots { border-color: var(--tree-root); }
+        .tree-effects { border-color: var(--tree-leaf); }
+
+        .dynamic-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .dynamic-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-add {
+            background: #eee;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .btn-remove {
+            background: #ffcdd2;
+            color: var(--error-color);
+            border: none;
+            padding: 0 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-submit:hover { background-color: #0d47a1; }
+        
+        .detected-word {
+            background-color: #ffcdd2;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <span class="stage-badge">Etapa 2 de 7: Gate "Causas Raíz"</span>
+        <h1>Definición del Problema y Diagnóstico</h1>
+        <p>Construcción del Árbol de Problemas basado en evidencia.</p>
+    </div>
+
+    <div class="alert-bias">
+        <strong>⚠️ REGLA DE ORO (Anti-Rechazo):</strong> Está prohibido mencionar soluciones (ej: "construcción", "compra", "taller") en esta etapa. Describa el <em>problema</em> (la carencia o situación negativa), no la falta de la solución.
+    </div>
+
+    <form id="problemForm" onsubmit="return validarAntiSolucion(event)">
+
+        <div class="form-section">
+            <div class="section-header" style="color: var(--secondary-color);">
+                1. Diagnóstico de la Situación Actual
+            </div>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;">Describa el estado actual sin proyecto. Debe incluir datos cuantitativos (Anexo 1 - Fuente 7).</p>
+            
+            <label for="diagnostico">Descripción del Diagnóstico *</label>
+            <textarea id="diagnostico" name="diagnostico" rows="6" maxlength="3500" placeholder="Ej: El 45% de la población rural en la comuna de..." required oninput="updateCount('diagnostico', 'diagCount', 500)"></textarea>
+            <div class="helper-text">
+                <span>Cita obligatoria de fuente (ej: Censo 2017, Casen, Depto. Salud).</span>
+                <span id="diagCount">0 / 500 palabras aprox.</span>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-header" style="color: var(--error-color);">
+                2. Problema Central (Tronco)
+            </div>
+            <p style="font-size: 0.9rem;">Defina una única situación central negativa. Sea concreto.</p>
+
+            <label for="problema_central">Definición del Problema *</label>
+            <textarea id="problema_central" name="problema_central" rows="3" maxlength="2000" placeholder="Ej: Alta incidencia de enfermedades respiratorias en adultos mayores del sector..." required oninput="updateCount('problema_central', 'probCount', 300)"></textarea>
+            <div class="helper-text">
+                <span id="biasWarning" style="color: var(--error-color); font-weight: bold; display: none;">Detectado lenguaje de solución. Corrija.</span>
+                <span id="probCount">0 / 300 palabras aprox.</span>
+            </div>
+        </div>
+
+        <div class="form-section tree-section tree-roots">
+            <div class="section-header" style="color: var(--tree-root);">
+                3. Causas (Raíces)
+            </div>
+            <p style="font-size: 0.9rem;">¿Por qué ocurre el problema? (Origen, no síntomas)</p>
+            
+            <ul class="dynamic-list" id="causasList">
+                <li class="dynamic-item">
+                    <input type="text" name="causas[]" placeholder="Causa 1 (Ej: Baja cobertura de vacunación...)" required>
+                </li>
+                <li class="dynamic-item">
+                    <input type="text" name="causas[]" placeholder="Causa 2 (Ej: Viviendas con aislamiento térmico deficiente...)" required>
+                </li>
+            </ul>
+            <button type="button" class="btn-add" onclick="addItem('causasList', 'Causa')">+ Agregar Causa</button>
+        </div>
+
+        <div class="form-section tree-section tree-effects">
+            <div class="section-header" style="color: var(--tree-leaf);">
+                4. Efectos (Ramas)
+            </div>
+            <p style="font-size: 0.9rem;">¿Qué consecuencias genera si no se resuelve?</p>
+            
+            <ul class="dynamic-list" id="efectosList">
+                <li class="dynamic-item">
+                    <input type="text" name="efectos[]" placeholder="Efecto 1 (Ej: Aumento de licencias médicas...)" required>
+                </li>
+                <li class="dynamic-item">
+                    <input type="text" name="efectos[]" placeholder="Efecto 2 (Ej: Colapso del servicio de urgencia...)" required>
+                </li>
+            </ul>
+            <button type="button" class="btn-add" onclick="addItem('efectosList', 'Efecto')">+ Agregar Efecto</button>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">Validar Metodología y Pasar a Etapa 3</button>
+
+    </form>
+</div>
+
+<script>
+    // LISTA NEGRA DE PALABRAS (Detectores de "Solución disfrazada de problema")
+    // Basado en el análisis Ishikawa "Foco excesivo en obras físicas"
+    const forbiddenWords = [
+        "construcción", "construir", "edificación", 
+        "adquisición", "adquirir", "compra", "comprar", 
+        "reposición", "reponer", 
+        "capacitación", "capacitar", "taller", "curso",
+        "contratación", "contratar",
+        "instalación", "instalar",
+        "vehículo", "camioneta", "ambulancia", "sede", "equipamiento"
+    ];
+
+    function updateCount(inputId, counterId, maxWords) {
+        const input = document.getElementById(inputId);
+        const counter = document.getElementById(counterId);
+        // Aproximación: 1 palabra = ~6 caracteres promedio + espacio
+        const words = input.value.trim().split(/\s+/).length;
+        const currentLength = input.value.length;
+        
+        // Validación simple de longitud basada en Anexo 1 (max 300/500 palabras)
+        counter.textContent = `${currentLength} chars (~${words} palabras) / Máx sugerido ${maxWords} palabras`;
+    }
+
+    function addItem(listId, placeholderPrefix) {
+        const list = document.getElementById(listId);
+        const li = document.createElement('li');
+        li.className = 'dynamic-item';
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = listId === 'causasList' ? 'causas[]' : 'efectos[]';
+        input.placeholder = `${placeholderPrefix} adicional...`;
+        input.required = true;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn-remove';
+        btn.textContent = 'X';
+        btn.onclick = function() { list.removeChild(li); };
+
+        li.appendChild(input);
+        li.appendChild(btn);
+        list.appendChild(li);
+    }
+
+    function validarAntiSolucion(event) {
+        event.preventDefault();
+        
+        const problemaInput = document.getElementById('problema_central');
+        const text = problemaInput.value.toLowerCase();
+        let detected = [];
+
+        // Verificar palabras prohibidas
+        forbiddenWords.forEach(word => {
+            if (text.includes(word)) {
+                detected.push(word);
+            }
+        });
+
+        // Verificar frase "falta de" seguida de solución
+        // Heurística común: "Falta de construcción" -> ERROR
+        if (text.includes("falta de construcción") || text.includes("falta de equipamiento")) {
+            detected.push("falta de [solución]");
+        }
+
+        if (detected.length > 0) {
+            alert(`⚠️ DETECCIÓN DE SESGO DE SOLUCIÓN ⚠️\n\nEl sistema ha detectado términos relacionados con soluciones u obras físicas: \n"${detected.join(", ")}"\n\nRecuerde: En esta etapa debe definir el PROBLEMA (la necesidad o dolor), no la solución. \n\nEjemplo Incorrecto: "Falta construir una posta".\nEjemplo Correcto: "Alta morbilidad por falta de atención primaria."`);
+            
+            problemaInput.style.borderColor = "var(--error-color)";
+            document.getElementById('biasWarning').style.display = "block";
+            problemaInput.focus();
+            return false;
+        }
+
+        // Validación de Citas en Diagnóstico
+        const diagnostico = document.getElementById('diagnostico').value;
+        const fuentesComunes = ["censo", "casen", "minsal", "ine", "encuesta", "registro", "fuente", "estudio"];
+        let tieneFuente = fuentesComunes.some(f => diagnostico.toLowerCase().includes(f));
+
+        if (!tieneFuente && diagnostico.length > 50) {
+            const confirmacion = confirm("⚠️ ADVERTENCIA DE DATOS: No se detectó una mención explícita a una fuente de datos (Censo, Casen, etc.) en su diagnóstico.\n\nLa falta de 'Datos Primarios' es una causa frecuente de rechazo.\n\n¿Desea volver y agregar la fuente?");
+            if (confirmacion) {
+                document.getElementById('diagnostico').focus();
+                return false;
+            }
+        }
+
+        // Éxito
+        const btn = document.getElementById('submitBtn');
+        btn.innerHTML = "✅ Problema Validado. Redirigiendo a Etapa 3 (Demanda)...";
+        btn.style.backgroundColor = "#2E7D32";
+        
+        setTimeout(() => {
+            alert("¡Excelente! Ha formulado un problema centrado en causas y efectos, evitando el sesgo de solución. Pasemos a cuantificar la población.");
+            // Lógica de envío real
+        }, 1000);
+        
+        return true;
+    }
+</script>
+
+</body>
+</html>

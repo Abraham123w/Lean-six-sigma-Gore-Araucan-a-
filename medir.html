@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medir | Portafolio Lean Six Sigma</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS GENERALES (Consistente con Inicio/Definir) --- */
+        :root {
+            --primary-color: #0f172a;
+            --accent-color: #2563eb;
+            --text-dark: #334155;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --highlight: #f1f5f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
+
+        /* --- NAVEGACIÓN --- */
+        header { background-color: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 80px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); text-transform: uppercase; }
+        .logo span { color: var(--accent-color); }
+        nav ul { list-style: none; display: flex; gap: 2rem; }
+        nav a { text-decoration: none; color: var(--text-dark); font-weight: 500; font-size: 0.95rem; transition: color 0.3s; }
+        nav a:hover { color: var(--accent-color); }
+        nav a.active { color: var(--accent-color); font-weight: 600; border-bottom: 2px solid var(--accent-color); }
+
+        /* --- CONTENIDO ESPECÍFICO MEDIR --- */
+        .page-header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-header p { color: #cbd5e1; max-width: 800px; margin: 0 auto; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
+        
+        /* Secciones de Texto */
+        .methodology-box {
+            background-color: var(--white);
+            border-left: 5px solid var(--accent-color);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin: 2rem 0 1.5rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Grid de Gráficos (3 columnas) */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .chart-placeholder {
+            background-color: var(--highlight);
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            border: 2px dashed #cbd5e1;
+        }
+
+        /* Nube de Etiquetas */
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            background: var(--white);
+            border-radius: 8px;
+        }
+        .tag {
+            background-color: #eff6ff;
+            color: var(--accent-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* Tabla de Datos */
+        .table-responsive { overflow-x: auto; margin-bottom: 3rem; }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); }
+        .data-table th { background-color: var(--primary-color); color: var(--white); font-weight: 600; }
+        .data-table tr:nth-child(even) { background-color: #f8fafc; }
+        .data-table tr:hover { background-color: #f1f5f9; }
+        /* Resaltar top 8 causas */
+        .top-cause { font-weight: 600; color: var(--primary-color); }
+
+        /* Análisis de Pareto y DPMO */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .dpmo-card {
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%); /* Rojo oscuro corporativo */
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .dpmo-number { font-size: 3rem; font-weight: 700; display: block; margin: 10px 0; }
+        .dpmo-label { text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; opacity: 0.9; }
+
+        /* Footer */
+        footer { background-color: var(--white); border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.9rem; color: var(--text-light); margin-top: auto;}
+
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; height: auto; padding: 1rem; }
+            nav ul { flex-wrap: wrap; justify-content: center; margin-top: 1rem; }
+            .analysis-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">LSS <span>PROJECT</span></div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="definir.html">Definir</a></li>
+                    <li><a href="medir.html" class="active">Medir</a></li>
+                    <li><a href="analizar.html">Analizar</a></li>
+                    <li><a href="mejorar.html">Mejorar</a></li>
+                    <li><a href="controlar.html">Controlar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <h1>4.2. Medir</h1>
+        <p>Recolección de datos, Minería de Texto y establecimiento de Línea Base</p>
+    </div>
+
+    <div class="container">
+
+        <div class="methodology-box">
+            <h3 style="color: var(--accent-color); margin-bottom: 10px;">Metodología de Extracción de Datos</h3>
+            <p>
+                En esta etapa se recopiló información del <strong>Anexo 7</strong> (comentarios de evaluadores sobre no aprobación técnica). 
+                La estructuración y limpieza se realizó mediante <strong>Python</strong> para agilizar el proceso. 
+                Utilizando técnicas de <strong>minería de texto</strong>, se extrajeron comentarios y se almacenaron en formato JSON 
+                para identificar patrones recurrentes sin modificar el contexto original (uso de mayúsculas preservado).
+            </p>
+        </div>
+
+        <h2 class="section-title">Análisis de Frecuencia de Texto</h2>
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-placeholder">[Gráfico 1: Nube de Palabras]</div>
+                <p><strong>Palabras individuales</strong> más frecuentes extraídas de las observaciones.</p>
+            </div>
+            <div class="chart-card">
+                <div class="chart-placeholder">[Gráfico 2: Bigramas]</div>
+                <p><strong>Bigramas</strong> (pares de palabras) más frecuentes.</p>
+            </div>
+            <div class="chart-card">
+                <div class="chart-placeholder">[Gráfico 3: Trigramas]</div>
+                <p><strong>Trigramas</strong> (tríos de palabras) más frecuentes.</p>
+            </div>
+        </div>
+
+        <h2 class="section-title">Categorización y Frecuencia de Fallas</h2>
+        <p style="margin-bottom: 1rem;">A partir de los hallazgos del VOC y la minería de texto, se definieron las siguientes etiquetas de agrupación:</p>
+        
+        <div class="tag-cloud">
+            <span class="tag">Identificación del problema</span>
+            <span class="tag">Validación del problema</span>
+            <span class="tag">Congruencia documental</span>
+            <span class="tag">Identificación del propósito</span>
+            <span class="tag">Validación del propósito</span>
+            <span class="tag">Identificación de componentes</span>
+            <span class="tag">Validación de componentes</span>
+            <span class="tag">Claridad beneficiario</span>
+            <span class="tag">Integridad presupuestaria</span>
+            <span class="tag">Cumplimiento normativo</span>
+            <span class="tag">Sin métricas</span>
+            <span class="tag">Desalineamiento regional</span>
+            <span class="tag">Otros</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Nº</th>
+                        <th>Causa / Observación</th>
+                        <th>Frecuencia</th>
+                        <th>Porcentaje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="top-cause"><td>1</td><td>Claridad en el beneficiario</td><td>417</td><td>14,1 %</td></tr>
+                    <tr class="top-cause"><td>2</td><td>Validación del problema</td><td>412</td><td>13,9 %</td></tr>
+                    <tr class="top-cause"><td>3</td><td>Congruencia documental</td><td>348</td><td>11,7 %</td></tr>
+                    <tr class="top-cause"><td>4</td><td>Desalineamiento regional</td><td>330</td><td>11,1 %</td></tr>
+                    <tr class="top-cause"><td>5</td><td>Identificación de componentes</td><td>272</td><td>9,2 %</td></tr>
+                    <tr class="top-cause"><td>6</td><td>Integridad presupuestaria</td><td>240</td><td>8,1 %</td></tr>
+                    <tr class="top-cause"><td>7</td><td>Identificación de problemas</td><td>225</td><td>7,6 %</td></tr>
+                    <tr class="top-cause"><td>8</td><td>Validación de componentes</td><td>184</td><td>6,2 %</td></tr>
+                    <tr><td>9</td><td>Sin métricas</td><td>157</td><td>5,3 %</td></tr>
+                    <tr><td>10</td><td>Otros</td><td>112</td><td>3,8 %</td></tr>
+                    <tr><td>11</td><td>Identificación del propósito</td><td>110</td><td>3,7 %</td></tr>
+                    <tr><td>12</td><td>Validación del propósito</td><td>80</td><td>2,7 %</td></tr>
+                    <tr><td>13</td><td>Cumplimiento normativo</td><td>76</td><td>2,6 %</td></tr>
+                </tbody>
+            </table>
+            <p style="font-size: 0.9rem; color: var(--text-light); text-align: right;">Tabla 1: Frecuencia de Etiquetas generadas a partir de la minería de texto y VOC.</p>
+        </div>
+
+        <h2 class="section-title">Análisis de Pareto y Línea Base</h2>
+        <div class="analysis-grid">
+            <div>
+                <div class="chart-placeholder" style="height: 300px; border: 2px solid var(--primary-color);">
+                    [Gráfico 4: Diagrama de Pareto]
+                </div>
+                <p>
+                    <strong>Interpretación:</strong> Teóricamente, se espera la regla 80/20. Sin embargo, en este caso, las causas se distribuyeron de manera más amplia (más del 50%).
+                </p>
+                <p style="margin-top: 10px;">
+                    <strong>Decisión Estratégica:</strong> Se ha decidido abordar las <span style="color: var(--accent-color); font-weight: bold;">8 causas principales</span> (resaltadas en la tabla) como prioridad en las acciones de mejora.
+                </p>
+            </div>
+            
+            <div class="dpmo-card">
+                <span class="dpmo-label">Nivel de Calidad Actual</span>
+                <span class="dpmo-number">964.285</span>
+                <span class="dpmo-label">DPMO (Defectos por Millón de Oportunidades)</span>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Abraham Castro. Licenciado en Ciencias de la Ingeniería</p>
+    </footer>
+
+</body>
+</html>

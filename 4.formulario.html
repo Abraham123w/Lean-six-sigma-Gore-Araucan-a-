@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etapa 4: Matriz de Marco Lógico | GORE Araucanía</title>
+    <style>
+        :root {
+            --primary-color: #1565C0; /* Azul GORE */
+            --purpose-color: #2E7D32; /* Verde Objetivo */
+            --component-color: #F57C00; /* Naranja Productos */
+            --bg-color: #F5F5F5;
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stage-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        /* Estructura Jerárquica */
+        .logic-level {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .level-fin { border-left: 5px solid var(--primary-color); background: #E3F2FD; }
+        .level-purpose { border-left: 5px solid var(--purpose-color); background: #E8F5E9; }
+        .level-component { border-left: 5px solid var(--component-color); background: #FFF3E0; margin-left: 20px;}
+
+        .level-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        textarea, input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .helper-text {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        /* Botones */
+        .btn-add {
+            background-color: var(--component-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .btn-remove {
+            background-color: #ef5350;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+            font-size: 0.8rem;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .error-msg {
+            color: #d32f2f;
+            font-size: 0.85rem;
+            display: none;
+            margin-top: -5px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        /* Tooltip simple */
+        .tooltip {
+            cursor: help;
+            border-bottom: 1px dotted #999;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <span class="stage-badge">Etapa 4 de 7: Gate "Marco Lógico"</span>
+        <h1>Coherencia Lógica y Metodológica</h1>
+        <p>Alineación de Objetivos, Indicadores y Medios de Verificación (Fuente: CEPAL/Anexo 3).</p>
+    </div>
+
+    <form id="logicForm" onsubmit="return validarMarcoLogico(event)">
+
+        <div class="logic-level level-fin">
+            <div class="level-title" style="color: var(--primary-color);">
+                1. Fin (Impacto a Largo Plazo)
+            </div>
+            <div class="helper-text">Debe contribuir al Lineamiento Estratégico seleccionado en la Etapa 1 (Anexo 2).</div>
+            
+            <label for="fin_desc">Descripción del Fin</label>
+            <textarea id="fin_desc" rows="2" placeholder="Ej: Contribuir a la disminución de la morbilidad respiratoria en la región..." required></textarea>
+        </div>
+
+        <div class="logic-level level-purpose">
+            <div class="level-title" style="color: var(--purpose-color);">
+                2. Propósito (Objetivo General)
+            </div>
+            <div class="helper-text">Debe ser el "espejo positivo" del Problema Central definido en la Etapa 2.</div>
+
+            <label for="proposito_desc">Descripción del Propósito</label>
+            <textarea id="proposito_desc" rows="2" placeholder="Ej: Población adulto mayor de la comuna X accede a servicios de salud oportunos..." required></textarea>
+
+            <label>Indicador de Propósito (Resultado)</label>
+            <div class="grid-3">
+                <input type="text" id="prop_ind_nombre" placeholder="Nombre Indicador (Ej: Tasa de cobertura)" required>
+                <input type="text" id="prop_ind_formula" placeholder="Fórmula de Cálculo" required>
+                <input type="number" id="prop_ind_meta" placeholder="Meta Final (Ej: 80)" required>
+            </div>
+        </div>
+
+        <div id="components-container">
+            </div>
+
+        <button type="button" class="btn-add" onclick="addComponent()">+ Agregar Componente (Bien/Servicio)</button>
+
+        <div style="margin-top: 20px; padding: 15px; background-color: #fff3e0; font-size: 0.9rem; border-left: 4px solid #ff9800;">
+            <strong>Nota Técnica (Anti-Rechazo):</strong> No ingrese actividades (ej: "realizar reunión"). Ingrese entregables tangibles (ej: "Sede construida", "Personal capacitado"). Las actividades se definirán en la Etapa 5 (Carta Gantt).
+        </div>
+
+        <button type="submit" class="btn-submit">Validar Lógica y Pasar a Etapa 5</button>
+
+    </form>
+</div>
+
+<script>
+    let componentCount = 0;
+
+    // Plantilla de Componente
+    function addComponent() {
+        componentCount++;
+        const container = document.getElementById('components-container');
+        
+        const html = `
+        <div class="logic-level level-component" id="comp-${componentCount}">
+            <button type="button" class="btn-remove" onclick="removeComponent(${componentCount})">Eliminar</button>
+            <div class="level-title" style="color: var(--component-color);">
+                3.${componentCount} Componente (Producto)
+            </div>
+            
+            <label>Causa que resuelve (Del Árbol de Problemas) *</label>
+            <input type="text" name="causa_link[]" placeholder="Ej: Infraestructura deteriorada e insalubre..." required>
+            <div class="helper-text">Vinculación obligatoria para evitar 'Quiebre de Lógica'.</div>
+
+            <label>Descripción del Componente (Bien o Servicio entregado) *</label>
+            <input type="text" name="comp_desc[]" placeholder="Ej: Centro de salud reposicionado y equipado." required>
+
+            <label>Medio de Verificación (Probatorio) *</label>
+            <input type="text" name="comp_verif[]" class="verif-input" placeholder="Ej: Acta de recepción final de obras" required onblur="checkWeakVerifier(this)">
+            <div class="error-msg">Medio de verificación muy genérico. Especifique el documento exacto (Acta, Certificado, Informe).</div>
+
+            <label>Indicador de Producto</label>
+            <div class="grid-3">
+                <input type="text" placeholder="Unidad (Ej: m2, personas)" required>
+                <input type="number" placeholder="Línea Base (Año 0)" required>
+                <input type="number" placeholder="Meta (Año 1)" required>
+            </div>
+        </div>
+        `;
+        
+        container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function removeComponent(id) {
+        const element = document.getElementById(`comp-${id}`);
+        if(element) element.remove();
+    }
+
+    // Validador de Verificadores "Débiles" (Causa de observación frecuente)
+    function checkWeakVerifier(input) {
+        const weakWords = ['fotos', 'fotografias', 'fotografías', 'listado', 'lista', 'anexos', 'documentos', 'ver anexo'];
+        const value = input.value.toLowerCase().trim();
+        const errorMsg = input.nextElementSibling;
+
+        // Si el input es solo una palabra débil o muy corta
+        if (weakWords.includes(value) || value.length < 5) {
+            input.style.borderColor = "var(--error-color)"; // Rojo
+            errorMsg.style.display = "block";
+            return false;
+        } else {
+            input.style.borderColor = "#ccc";
+            errorMsg.style.display = "none";
+            return true;
+        }
+    }
+
+    function validarMarcoLogico(event) {
+        event.preventDefault();
+
+        // 1. Validar que exista al menos 1 componente
+        if (componentCount === 0) {
+            alert("Error: El proyecto debe tener al menos un Componente (Producto) que entregue bienes o servicios a la población.");
+            return false;
+        }
+
+        // 2. Validar coherencia vertical (Simulada)
+        const proposito = document.getElementById('proposito_desc').value;
+        const componentes = document.querySelectorAll('input[name="comp_desc[]"]');
+        let hasContent = true;
+
+        componentes.forEach(comp => {
+            if (comp.value.length < 5) hasContent = false;
+        });
+
+        if (!hasContent) {
+            alert("Error: Complete las descripciones de todos los componentes.");
+            return false;
+        }
+
+        // 3. Validar Verificadores nuevamente
+        const verifiers = document.querySelectorAll('.verif-input');
+        let verifiersOk = true;
+        verifiers.forEach(v => {
+            if (!checkWeakVerifier(v)) verifiersOk = false;
+        });
+
+        if (!verifiersOk) {
+            alert("Error de Calidad: Tiene 'Medios de Verificación' genéricos (ej: 'fotos'). \n\nPara asegurar la admisibilidad (Anexo 3), debe especificar documentos oficiales (Ej: 'Lista de asistencia con firma y RUT').");
+            return false;
+        }
+
+        // Éxito
+        const btn = document.querySelector('.btn-submit');
+        btn.innerHTML = "✅ Lógica Validada. Preparando Cronograma...";
+        btn.style.backgroundColor = "#2E7D32"; // Verde éxito
+        
+        setTimeout(() => {
+            alert("¡Excelente! La coherencia metodológica ha sido verificada. \n\nAhora que sabemos QUÉ haremos (Componentes), pasemos a la Etapa 5 para definir CÓMO y CUÁNDO (Actividades y Carta Gantt).");
+        }, 1000);
+
+        return true;
+    }
+
+    // Inicializar con un componente
+    window.onload = function() {
+        addComponent();
+    };
+</script>
+
+</body>
+</html>

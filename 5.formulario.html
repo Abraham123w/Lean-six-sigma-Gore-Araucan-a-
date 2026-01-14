@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etapa 5: Estrategia Operativa | GORE Araucanía</title>
+    <style>
+        :root {
+            --primary-color: #1565C0;
+            --secondary-color: #424242;
+            --gantt-bar: #3949AB;
+            --warning-color: #F57C00;
+            --bg-color: #F5F5F5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px; /* Más ancho para el Gantt */
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stage-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        /* Layout Formulario */
+        .activity-form {
+            background-color: #E3F2FD;
+            padding: 20px;
+            border-radius: 6px;
+            border-left: 5px solid var(--primary-color);
+            margin-bottom: 30px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: 2fr 2fr 1fr 1fr;
+            gap: 15px;
+            align-items: end;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .btn-add {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            height: 42px; /* Alineación con inputs */
+        }
+
+        /* Tabla Gantt */
+        .gantt-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th { background-color: #f1f1f1; }
+        .text-left { text-align: left; }
+        
+        .month-header {
+            width: 40px;
+            font-size: 0.8rem;
+        }
+
+        .gantt-cell { background-color: white; }
+        .active-month { background-color: var(--gantt-bar); opacity: 0.8; }
+
+        .component-row {
+            background-color: #fff3e0;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 30px;
+        }
+
+        .alert-box {
+            padding: 10px;
+            background-color: #ffebee;
+            color: #c62828;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+            font-weight: bold;
+        }
+
+        /* Nota de Desagregación */
+        .note {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <span class="stage-badge">Etapa 5 de 7: Gate "Cronograma"</span>
+        <h1>Estrategia Operativa y Carta Gantt</h1>
+        <p>Transformación de Componentes en Actividades Temporales (Anexo 3).</p>
+    </div>
+
+    <div style="display:none;" id="componentsData">
+        ["C1: Habilitación de Infraestructura", "C2: Capacitación a Usuarios", "C3: Difusión y Marketing"]
+    </div>
+
+    <div class="activity-form">
+        <h3>Definición de Actividades</h3>
+        <p class="note">Nota: En esta etapa NO ingrese costos. Solo enfóquese en la viabilidad del tiempo y la metodología.</p>
+        
+        <div class="grid-4">
+            <div>
+                <label>Componente Padre (Etapa 4)</label>
+                <select id="sel_component">
+                    <option value="">Seleccione Componente...</option>
+                    </select>
+            </div>
+            <div>
+                <label>Nombre de la Actividad (Tarea)</label>
+                <input type="text" id="act_name" placeholder="Ej: Licitación de obras...">
+            </div>
+            <div>
+                <label>Mes Inicio</label>
+                <input type="number" id="act_start" min="1" max="12" placeholder="1-12">
+            </div>
+            <div>
+                <label>Duración (Meses)</label>
+                <input type="number" id="act_duration" min="1" max="12" placeholder="Ej: 2">
+            </div>
+        </div>
+        
+        <div style="margin-top: 15px;">
+            <label>Descripción Metodológica (¿Cómo se hará?)</label>
+            <input type="text" id="act_desc" placeholder="Describa brevemente la logística (Ej: Se publicará en Mercado Público por 20 días...)" style="width: 100%;">
+        </div>
+
+        <div style="text-align: right; margin-top: 15px;">
+            <button type="button" class="btn-add" onclick="addActivity()">+ Agregar a Gantt</button>
+        </div>
+        <div id="inputError" class="alert-box">Error: Complete todos los campos correctamente.</div>
+    </div>
+
+    <h3>Visualización de Carta Gantt (Horizonte 12 Meses)</h3>
+    <div class="gantt-wrapper">
+        <table id="ganttTable">
+            <thead>
+                <tr>
+                    <th style="width: 30%;">Actividad</th>
+                    <th class="month-header">1</th><th class="month-header">2</th><th class="month-header">3</th>
+                    <th class="month-header">4</th><th class="month-header">5</th><th class="month-header">6</th>
+                    <th class="month-header">7</th><th class="month-header">8</th><th class="month-header">9</th>
+                    <th class="month-header">10</th><th class="month-header">11</th><th class="month-header">12</th>
+                    <th style="width: 10%;">Acción</th>
+                </tr>
+            </thead>
+            <tbody id="ganttBody">
+                <tr><td colspan="14" style="text-align:center; color:#999; padding:20px;">Sin actividades definidas aún.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="logicError" class="alert-box" style="background-color: #fff3e0; color: #e65100;">
+        ⚠️ Alerta de Lógica: Hay componentes aprobados en Etapa 4 que no tienen actividades asignadas. No podrá avanzar.
+    </div>
+
+    <button type="submit" class="btn-submit" onclick="validarEstrategia()">Confirmar Cronograma y Pasar a Valorización (Etapa 6)</button>
+
+</div>
+
+<script>
+    // 1. Simulación de carga de Componentes desde Etapa 4
+    const componentsRaw = document.getElementById('componentsData').innerText;
+    // Limpiamos el string para simular un array real
+    const componentsList = JSON.parse(componentsRaw.replace(/'/g, '"')); 
+    
+    // Llenar el Select
+    const select = document.getElementById('sel_component');
+    componentsList.forEach((comp, index) => {
+        const opt = document.createElement('option');
+        opt.value = index; // Usamos el índice como ID simulado
+        opt.text = comp;
+        select.appendChild(opt);
+    });
+
+    // Estado del Gantt
+    let activities = [];
+
+    function addActivity() {
+        const compIndex = select.value;
+        const compName = select.options[select.selectedIndex].text;
+        const name = document.getElementById('act_name').value;
+        const start = parseInt(document.getElementById('act_start').value);
+        const duration = parseInt(document.getElementById('act_duration').value);
+        const desc = document.getElementById('act_desc').value;
+
+        // Validaciones de Entrada
+        const errorBox = document.getElementById('inputError');
+        if (!compIndex || !name || !start || !duration || !desc) {
+            errorBox.style.display = 'block';
+            errorBox.innerText = "Error: Todos los campos son obligatorios.";
+            return;
+        }
+
+        if (start + duration - 1 > 12) {
+            errorBox.style.display = 'block';
+            errorBox.innerText = "Error Temporal: La actividad excede el horizonte de 12 meses del proyecto.";
+            return;
+        }
+
+        errorBox.style.display = 'none';
+
+        // Agregar al Array
+        activities.push({
+            compIndex,
+            compName,
+            name,
+            start,
+            duration,
+            desc
+        });
+
+        renderGantt();
+        
+        // Limpiar inputs
+        document.getElementById('act_name').value = "";
+        document.getElementById('act_desc').value = "";
+    }
+
+    function removeActivity(index) {
+        activities.splice(index, 1);
+        renderGantt();
+    }
+
+    function renderGantt() {
+        const tbody = document.getElementById('ganttBody');
+        tbody.innerHTML = "";
+
+        // Agrupar por componentes para visualización ordenada
+        // (En un sistema real, esto se haría con lógica de backend o reduce)
+        
+        // Recorremos los componentes originales para mantener el orden de Etapa 4
+        componentsList.forEach((compName, cIdx) => {
+            // Filtrar actividades de este componente
+            const compActs = activities.filter(a => a.compIndex == cIdx);
+
+            if (compActs.length > 0) {
+                // Fila Título Componente
+                const rowHeader = `<tr class="component-row"><td colspan="14">${compName}</td></tr>`;
+                tbody.insertAdjacentHTML('beforeend', rowHeader);
+
+                // Filas de Actividades
+                compActs.forEach((act, aIdx) => {
+                    // Encontrar índice global para borrar
+                    const globalIdx = activities.indexOf(act);
+                    
+                    let cells = "";
+                    for (let m = 1; m <= 12; m++) {
+                        if (m >= act.start && m < (act.start + act.duration)) {
+                            cells += `<td class="active-month"></td>`;
+                        } else {
+                            cells += `<td class="gantt-cell"></td>`;
+                        }
+                    }
+
+                    const row = `
+                        <tr>
+                            <td class="text-left" style="padding-left: 20px;">
+                                <strong>${act.name}</strong><br>
+                                <small style="color:#666;">${act.desc.substring(0,30)}...</small>
+                            </td>
+                            ${cells}
+                            <td><button onclick="removeActivity(${globalIdx})" style="color:red;border:none;background:none;cursor:pointer;">X</button></td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+            }
+        });
+
+        checkOrphans();
+    }
+
+    function checkOrphans() {
+        const logicError = document.getElementById('logicError');
+        // Verificar si algún componente NO tiene actividades
+        const activeCompIndices = [...new Set(activities.map(a => a.compIndex))];
+        
+        // Comparamos el tamaño de componentes con actividades vs componentes totales
+        // Nota: compIndex es string en el value, number en el array original. Cuidado con tipos.
+        const isMissing = componentsList.some((_, idx) => !activeCompIndices.includes(idx.toString()));
+
+        if (isMissing) {
+            logicError.style.display = 'block';
+            return false;
+        } else {
+            logicError.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validarEstrategia() {
+        if (activities.length === 0) {
+            alert("La Carta Gantt está vacía.");
+            return;
+        }
+
+        if (!checkOrphans()) {
+            alert("Validación Fallida: Existen Componentes (definidos en Etapa 4) que no tienen ninguna actividad asociada en el cronograma.\n\nEsto genera 'Inconsistencia Metodológica'. Por favor asegúrese de definir cómo ejecutará cada componente.");
+            return;
+        }
+
+        // Éxito
+        const btn = document.querySelector('.btn-submit');
+        btn.innerText = "✅ Cronograma Validado. Calculando Presupuesto...";
+        btn.style.backgroundColor = "#2E7D32";
+        
+        setTimeout(() => {
+            alert("¡Excelente! Ha definido la Estrategia Operativa sin sesgos financieros. \n\nAhora que tenemos las Actividades y los Tiempos claros, pasemos a la Etapa 6 para ponerles precio (Valorización).");
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>

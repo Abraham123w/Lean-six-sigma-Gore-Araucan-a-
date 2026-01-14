@@ -6,7 +6,7 @@
     <title>Medir | Portafolio Lean Six Sigma</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- ESTILOS GENERALES (Consistente con Inicio/Definir) --- */
+        /* --- ESTILOS GENERALES --- */
         :root {
             --primary-color: #0f172a;
             --accent-color: #2563eb;
@@ -19,7 +19,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
+        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
 
         /* --- NAVEGACIÓN --- */
         header { background-color: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
@@ -41,9 +41,8 @@
         .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .page-header p { color: #cbd5e1; max-width: 800px; margin: 0 auto; }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; flex: 1; }
         
-        /* Secciones de Texto */
         .methodology-box {
             background-color: var(--white);
             border-left: 5px solid var(--accent-color);
@@ -61,10 +60,10 @@
             padding-bottom: 0.5rem;
         }
 
-        /* Grid de Gráficos (3 columnas) */
+        /* --- ESTILOS PARA GRÁFICOS DE TEXTO --- */
         .charts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
             margin-bottom: 3rem;
         }
@@ -73,78 +72,157 @@
             background: var(--white);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            max-height: 500px; /* Limite de altura para listas largas */
         }
+
+        .chart-card h4 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--highlight);
+            padding-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Scroll personalizado para listas largas */
+        .scrollable-chart {
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .scrollable-chart::-webkit-scrollbar { width: 6px; }
+        .scrollable-chart::-webkit-scrollbar-track { background: #f1f1f1; }
+        .scrollable-chart::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+        /* Nube de palabras CSS */
+        .word-cloud-viz {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 0;
+            height: 100%;
+        }
+        .wc-word {
+            color: var(--text-dark);
+            line-height: 1;
+            transition: color 0.2s;
+            cursor: default;
+        }
+        .wc-word:hover { color: var(--accent-color); }
         
-        .chart-placeholder {
-            background-color: var(--highlight);
-            height: 200px;
+        /* Tamaños basados en frecuencia */
+        .s-xxl { font-size: 2.5rem; font-weight: 800; color: #1e3a8a; } /* >500 */
+        .s-xl { font-size: 2.0rem; font-weight: 700; color: #2563eb; } /* 400-500 */
+        .s-lg { font-size: 1.6rem; font-weight: 600; color: #3b82f6; } /* 300-399 */
+        .s-md { font-size: 1.3rem; font-weight: 500; color: #64748b; } /* 200-299 */
+        .s-sm { font-size: 1.0rem; font-weight: 400; color: #94a3b8; } /* <200 */
+
+        /* Gráfico de Barras CSS */
+        .bar-chart-viz {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+        .bar-item { display: flex; flex-direction: column; gap: 4px; }
+        .bar-label { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 500; color: var(--text-dark); }
+        .bar-count { color: var(--text-light); font-size: 0.8rem; }
+        .bar-track { background-color: var(--highlight); height: 8px; border-radius: 4px; width: 100%; overflow: hidden; }
+        .bar-fill { background-color: var(--accent-color); height: 100%; border-radius: 4px; }
+        
+        /* Variaciones sutiles de color para las barras */
+        .bar-item:nth-child(odd) .bar-fill { background-color: #2563eb; }
+        .bar-item:nth-child(even) .bar-fill { background-color: #3b82f6; }
+
+        /* --- ESTILOS PREVISUALIZACIÓN PARETO (ZOOM OUT) --- */
+        .pareto-preview-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            overflow: hidden; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: var(--white);
+        }
+
+        .pareto-preview-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.15);
+            border-color: var(--accent-color);
+        }
+
+        .pareto-iframe {
+            width: 200%;        
+            height: 200%;       
+            border: none;
+            pointer-events: none; 
+            transform: scale(0.5); 
+            transform-origin: 0 0; 
+        }
+
+        .pareto-overlay-link {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            background-color: rgba(0,0,0,0);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-            border: 2px dashed #cbd5e1;
+            text-decoration: none;
+            transition: background-color 0.3s;
         }
 
-        /* Nube de Etiquetas */
+        .pareto-overlay-link:hover {
+            background-color: rgba(15, 23, 42, 0.1);
+        }
+
+        .view-interactive-btn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .pareto-preview-container:hover .view-interactive-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- ESTILOS ETIQUETAS --- */
         .tag-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 3rem;
-            padding: 1.5rem;
-            background: var(--white);
-            border-radius: 8px;
+            display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 3rem; padding: 1.5rem;
+            background: var(--white); border-radius: 8px;
         }
         .tag {
-            background-color: #eff6ff;
-            color: var(--accent-color);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            border: 1px solid #bfdbfe;
+            background-color: #eff6ff; color: var(--accent-color); padding: 8px 16px;
+            border-radius: 20px; font-size: 0.9rem; font-weight: 500; border: 1px solid #bfdbfe;
         }
 
-        /* Tabla de Datos */
-        .table-responsive { overflow-x: auto; margin-bottom: 3rem; }
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--white);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); }
-        .data-table th { background-color: var(--primary-color); color: var(--white); font-weight: 600; }
-        .data-table tr:nth-child(even) { background-color: #f8fafc; }
-        .data-table tr:hover { background-color: #f1f5f9; }
-        /* Resaltar top 8 causas */
-        .top-cause { font-weight: 600; color: var(--primary-color); }
-
-        /* Análisis de Pareto y DPMO */
+        /* --- ANÁLISIS Y DPMO --- */
         .analysis-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-            align-items: center;
+            display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: center;
         }
-        
         .dpmo-card {
-            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%); /* Rojo oscuro corporativo */
-            color: white;
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+            color: white; padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .dpmo-number { font-size: 3rem; font-weight: 700; display: block; margin: 10px 0; }
         .dpmo-label { text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; opacity: 0.9; }
 
-        /* Footer */
         footer { background-color: var(--white); border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.9rem; color: var(--text-light); margin-top: auto;}
 
         @media (max-width: 768px) {
@@ -185,85 +263,128 @@
                 En esta etapa se recopiló información del <strong>Anexo 7</strong> (comentarios de evaluadores sobre no aprobación técnica). 
                 La estructuración y limpieza se realizó mediante <strong>Python</strong> para agilizar el proceso. 
                 Utilizando técnicas de <strong>minería de texto</strong>, se extrajeron comentarios y se almacenaron en formato JSON 
-                para identificar patrones recurrentes sin modificar el contexto original (uso de mayúsculas preservado).
+                para identificar patrones recurrentes sin modificar el contexto original.
             </p>
         </div>
 
         <h2 class="section-title">Análisis de Frecuencia de Texto</h2>
         <div class="charts-grid">
+            
             <div class="chart-card">
-                <div class="chart-placeholder">[Gráfico 1: Nube de Palabras]</div>
-                <p><strong>Palabras individuales</strong> más frecuentes extraídas de las observaciones.</p>
+                <h4>Palabras Clave (Frecuencia)</h4>
+                <div class="word-cloud-viz scrollable-chart">
+                    <span class="wc-word s-xxl" title="510">iniciativa</span>
+                    <span class="wc-word s-xl" title="409">programa</span>
+                    <span class="wc-word s-xl" title="403">problema</span>
+                    <span class="wc-word s-lg" title="355">debe</span>
+                    <span class="wc-word s-lg" title="340">punto</span>
+                    <span class="wc-word s-lg" title="301">población</span>
+                    <span class="wc-word s-md" title="299">posible</span>
+                    <span class="wc-word s-md" title="285">correcta</span>
+                    <span class="wc-word s-md" title="275">identificación</span>
+                    <span class="wc-word s-md" title="264">validar</span>
+                    <span class="wc-word s-md" title="224">anexo</span>
+                    <span class="wc-word s-md" title="205">componentes</span>
+                    <span class="wc-word s-md" title="200">propósito</span>
+                    <span class="wc-word s-sm" title="186">regional</span>
+                    <span class="wc-word s-sm" title="182">beneficiarios</span>
+                    <span class="wc-word s-sm" title="178">presenta</span>
+                    <span class="wc-word s-sm" title="171">ser</span>
+                    <span class="wc-word s-sm" title="170">objetivo</span>
+                    <span class="wc-word s-sm" title="167">entre</span>
+                    <span class="wc-word s-sm" title="149">desarrollo</span>
+                </div>
             </div>
+
             <div class="chart-card">
-                <div class="chart-placeholder">[Gráfico 2: Bigramas]</div>
-                <p><strong>Bigramas</strong> (pares de palabras) más frecuentes.</p>
+                <h4>Bigramas Frecuentes</h4>
+                <div class="bar-chart-viz scrollable-chart">
+                    <div class="bar-item"><div class="bar-label"><span>posible validar</span> <span class="bar-count">251</span></div><div class="bar-track"><div class="bar-fill" style="width: 100%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>validar punto</span> <span class="bar-count">251</span></div><div class="bar-track"><div class="bar-fill" style="width: 100%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>correcta identificación</span> <span class="bar-count">249</span></div><div class="bar-track"><div class="bar-fill" style="width: 99%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>problema posible</span> <span class="bar-count">156</span></div><div class="bar-track"><div class="bar-fill" style="width: 62%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>identificación problema</span> <span class="bar-count">149</span></div><div class="bar-track"><div class="bar-fill" style="width: 59%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>ficha idi</span> <span class="bar-count">122</span></div><div class="bar-track"><div class="bar-fill" style="width: 48%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>punto correcta</span> <span class="bar-count">104</span></div><div class="bar-track"><div class="bar-fill" style="width: 41%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>entre otros</span> <span class="bar-count">95</span></div><div class="bar-track"><div class="bar-fill" style="width: 38%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>población objetivo</span> <span class="bar-count">75</span></div><div class="bar-track"><div class="bar-fill" style="width: 30%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>iniciativa señala</span> <span class="bar-count">74</span></div><div class="bar-track"><div class="bar-fill" style="width: 29%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>señala entre</span> <span class="bar-count">70</span></div><div class="bar-track"><div class="bar-fill" style="width: 28%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>debe ser</span> <span class="bar-count">65</span></div><div class="bar-track"><div class="bar-fill" style="width: 26%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>estrategia intervención</span> <span class="bar-count">65</span></div><div class="bar-track"><div class="bar-fill" style="width: 26%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>gobierno regional</span> <span class="bar-count">56</span></div><div class="bar-track"><div class="bar-fill" style="width: 22%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>identificación propósito</span> <span class="bar-count">52</span></div><div class="bar-track"><div class="bar-fill" style="width: 21%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>propósito posible</span> <span class="bar-count">51</span></div><div class="bar-track"><div class="bar-fill" style="width: 20%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>población potencial</span> <span class="bar-count">49</span></div><div class="bar-track"><div class="bar-fill" style="width: 19%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>componentes posible</span> <span class="bar-count">43</span></div><div class="bar-track"><div class="bar-fill" style="width: 17%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>deben ser</span> <span class="bar-count">42</span></div><div class="bar-track"><div class="bar-fill" style="width: 16%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>residuos sólidos</span> <span class="bar-count">40</span></div><div class="bar-track"><div class="bar-fill" style="width: 16%;"></div></div></div>
+                </div>
             </div>
+
             <div class="chart-card">
-                <div class="chart-placeholder">[Gráfico 3: Trigramas]</div>
-                <p><strong>Trigramas</strong> (tríos de palabras) más frecuentes.</p>
+                <h4>Trigramas Frecuentes</h4>
+                <div class="bar-chart-viz scrollable-chart">
+                    <div class="bar-item"><div class="bar-label"><span>posible validar punto</span> <span class="bar-count">251</span></div><div class="bar-track"><div class="bar-fill" style="width: 100%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>correcta identificación problema</span> <span class="bar-count">147</span></div><div class="bar-track"><div class="bar-fill" style="width: 58%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>identificación problema posible</span> <span class="bar-count">133</span></div><div class="bar-track"><div class="bar-fill" style="width: 53%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>problema posible validar</span> <span class="bar-count">133</span></div><div class="bar-track"><div class="bar-fill" style="width: 53%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>punto correcta identificación</span> <span class="bar-count">92</span></div><div class="bar-track"><div class="bar-fill" style="width: 36%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>validar punto correcta</span> <span class="bar-count">91</span></div><div class="bar-track"><div class="bar-fill" style="width: 36%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>señala entre otros</span> <span class="bar-count">70</span></div><div class="bar-track"><div class="bar-fill" style="width: 28%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>iniciativa señala entre</span> <span class="bar-count">65</span></div><div class="bar-track"><div class="bar-fill" style="width: 26%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>correcta identificación propósito</span> <span class="bar-count">52</span></div><div class="bar-track"><div class="bar-fill" style="width: 21%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>identificación propósito posible</span> <span class="bar-count">51</span></div><div class="bar-track"><div class="bar-fill" style="width: 20%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>propósito posible validar</span> <span class="bar-count">51</span></div><div class="bar-track"><div class="bar-fill" style="width: 20%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>componentes posible validar</span> <span class="bar-count">43</span></div><div class="bar-track"><div class="bar-fill" style="width: 17%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>correcta identificación componentes</span> <span class="bar-count">33</span></div><div class="bar-track"><div class="bar-fill" style="width: 13%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>identificación componentes posible</span> <span class="bar-count">33</span></div><div class="bar-track"><div class="bar-fill" style="width: 13%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>firma fecha congruente</span> <span class="bar-count">33</span></div><div class="bar-track"><div class="bar-fill" style="width: 13%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>fecha congruente nueva</span> <span class="bar-count">33</span></div><div class="bar-track"><div class="bar-fill" style="width: 13%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>congruente nueva versión</span> <span class="bar-count">33</span></div><div class="bar-track"><div class="bar-fill" style="width: 13%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>texto incluido anexo</span> <span class="bar-count">26</span></div><div class="bar-track"><div class="bar-fill" style="width: 10%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>fondo regional productividad</span> <span class="bar-count">23</span></div><div class="bar-track"><div class="bar-fill" style="width: 9%;"></div></div></div>
+                    <div class="bar-item"><div class="bar-label"><span>regional productividad desarrollo</span> <span class="bar-count">23</span></div><div class="bar-track"><div class="bar-fill" style="width: 9%;"></div></div></div>
+                </div>
             </div>
+
         </div>
 
         <h2 class="section-title">Categorización y Frecuencia de Fallas</h2>
         <p style="margin-bottom: 1rem;">A partir de los hallazgos del VOC y la minería de texto, se definieron las siguientes etiquetas de agrupación:</p>
         
         <div class="tag-cloud">
-            <span class="tag">Identificación del problema</span>
-            <span class="tag">Validación del problema</span>
-            <span class="tag">Congruencia documental</span>
-            <span class="tag">Identificación del propósito</span>
-            <span class="tag">Validación del propósito</span>
-            <span class="tag">Identificación de componentes</span>
-            <span class="tag">Validación de componentes</span>
-            <span class="tag">Claridad beneficiario</span>
-            <span class="tag">Integridad presupuestaria</span>
-            <span class="tag">Cumplimiento normativo</span>
-            <span class="tag">Sin métricas</span>
-            <span class="tag">Desalineamiento regional</span>
-            <span class="tag">Otros</span>
-        </div>
-
-        <div class="table-responsive">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Nº</th>
-                        <th>Causa / Observación</th>
-                        <th>Frecuencia</th>
-                        <th>Porcentaje</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="top-cause"><td>1</td><td>Claridad en el beneficiario</td><td>417</td><td>14,1 %</td></tr>
-                    <tr class="top-cause"><td>2</td><td>Validación del problema</td><td>412</td><td>13,9 %</td></tr>
-                    <tr class="top-cause"><td>3</td><td>Congruencia documental</td><td>348</td><td>11,7 %</td></tr>
-                    <tr class="top-cause"><td>4</td><td>Desalineamiento regional</td><td>330</td><td>11,1 %</td></tr>
-                    <tr class="top-cause"><td>5</td><td>Identificación de componentes</td><td>272</td><td>9,2 %</td></tr>
-                    <tr class="top-cause"><td>6</td><td>Integridad presupuestaria</td><td>240</td><td>8,1 %</td></tr>
-                    <tr class="top-cause"><td>7</td><td>Identificación de problemas</td><td>225</td><td>7,6 %</td></tr>
-                    <tr class="top-cause"><td>8</td><td>Validación de componentes</td><td>184</td><td>6,2 %</td></tr>
-                    <tr><td>9</td><td>Sin métricas</td><td>157</td><td>5,3 %</td></tr>
-                    <tr><td>10</td><td>Otros</td><td>112</td><td>3,8 %</td></tr>
-                    <tr><td>11</td><td>Identificación del propósito</td><td>110</td><td>3,7 %</td></tr>
-                    <tr><td>12</td><td>Validación del propósito</td><td>80</td><td>2,7 %</td></tr>
-                    <tr><td>13</td><td>Cumplimiento normativo</td><td>76</td><td>2,6 %</td></tr>
-                </tbody>
-            </table>
-            <p style="font-size: 0.9rem; color: var(--text-light); text-align: right;">Tabla 1: Frecuencia de Etiquetas generadas a partir de la minería de texto y VOC.</p>
+            <span class="tag">1. Identificación del problema</span>
+            <span class="tag">2. Validación del problema</span>
+            <span class="tag">3. Congruencia documental</span>
+            <span class="tag">4. Identificación del propósito</span>
+            <span class="tag">5. Validación del propósito</span>
+            <span class="tag">6. Identificación de componentes</span>
+            <span class="tag">7. Validación de componentes</span>
+            <span class="tag">8. Claridad beneficiario</span>
+            <span class="tag">9. Integridad presupuestaria</span>
+            <span class="tag">10. Cumplimiento normativo</span>
+            <span class="tag">11. Sin métricas</span>
+            <span class="tag">12. Desalineamiento regional</span>
+            <span class="tag">13. Otros</span>
         </div>
 
         <h2 class="section-title">Análisis de Pareto y Línea Base</h2>
         <div class="analysis-grid">
             <div>
-                <div class="chart-placeholder" style="height: 300px; border: 2px solid var(--primary-color);">
-                    [Gráfico 4: Diagrama de Pareto]
+                <div class="pareto-preview-container">
+                    <iframe src="pareto.html" class="pareto-iframe" scrolling="no" title="Previsualización Pareto"></iframe>
+                    
+                    <a href="pareto.html" class="pareto-overlay-link">
+                        <span class="view-interactive-btn">Abrir Gráfico Interactivo ↗</span>
+                    </a>
                 </div>
-                <p>
+
+                <p style="margin-top: 1rem;">
                     <strong>Interpretación:</strong> Teóricamente, se espera la regla 80/20. Sin embargo, en este caso, las causas se distribuyeron de manera más amplia (más del 50%).
                 </p>
                 <p style="margin-top: 10px;">
-                    <strong>Decisión Estratégica:</strong> Se ha decidido abordar las <span style="color: var(--accent-color); font-weight: bold;">8 causas principales</span> (resaltadas en la tabla) como prioridad en las acciones de mejora.
+                    <strong>Decisión Estratégica:</strong> Se ha decidido abordar las <span style="color: var(--accent-color); font-weight: bold;">8 causas principales</span> como prioridad en las acciones de mejora.
                 </p>
             </div>
             

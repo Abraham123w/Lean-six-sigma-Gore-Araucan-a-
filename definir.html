@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Definir | Portafolio Lean Six Sigma</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS GENERALES (Igual que Inicio) --- */
+        :root {
+            --primary-color: #0f172a;
+            --accent-color: #2563eb;
+            --success-color: #059669; /* Verde para Bloque 1 */
+            --danger-color: #dc2626;  /* Rojo para Bloque 2 */
+            --warning-color: #d97706; /* Ámbar para Bloque 3 */
+            --text-dark: #334155;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
+
+        /* --- NAVEGACIÓN --- */
+        header { background-color: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 80px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); text-transform: uppercase; }
+        .logo span { color: var(--accent-color); }
+        nav ul { list-style: none; display: flex; gap: 2rem; }
+        nav a { text-decoration: none; color: var(--text-dark); font-weight: 500; font-size: 0.95rem; transition: color 0.3s; }
+        nav a:hover { color: var(--accent-color); }
+        nav a.active { color: var(--accent-color); font-weight: 600; border-bottom: 2px solid var(--accent-color); }
+
+        /* --- CONTENIDO ESPECÍFICO DEFINIR --- */
+        .page-header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-header p { color: #cbd5e1; max-width: 800px; margin: 0 auto; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
+        
+        /* Sección Problema (4.1) */
+        .problem-section { 
+            display: grid; 
+            grid-template-columns: 2fr 1fr; 
+            gap: 2rem; 
+            background: var(--white); 
+            padding: 2rem; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, var(--accent-color), #1e40af);
+            color: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .stat-number { font-size: 3.5rem; font-weight: 700; line-height: 1; margin-bottom: 0.5rem; }
+        .stat-label { font-size: 1rem; opacity: 0.9; }
+
+        /* Títulos de Sección */
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 1rem;
+        }
+        .sub-title { font-size: 1.4rem; margin-bottom: 1rem; color: var(--text-dark); }
+
+        /* VOC GRID (4.1.1) */
+        .voc-container { display: flex; flex-direction: column; gap: 2rem; margin-bottom: 4rem; }
+        
+        .voc-block {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+        }
+        
+        .voc-block.success { border-top: 5px solid var(--success-color); }
+        .voc-block.danger { border-top: 5px solid var(--danger-color); }
+        .voc-block.warning { border-top: 5px solid var(--warning-color); }
+
+        .voc-block h3 { margin-bottom: 1.5rem; font-size: 1.3rem; }
+        .voc-block.success h3 { color: var(--success-color); }
+        .voc-block.danger h3 { color: var(--danger-color); }
+        .voc-block.warning h3 { color: var(--warning-color); }
+
+        .voc-list { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .voc-list li { margin-bottom: 0.5rem; }
+        .highlight-box {
+            background-color: #f1f5f9;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* SIPOC TABLE (4.1.2) */
+        .table-responsive { overflow-x: auto; }
+        .sipoc-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            font-size: 0.9rem;
+            min-width: 900px; /* Asegura que no se rompa en móvil */
+        }
+        .sipoc-table th {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 1rem;
+            text-align: left;
+            width: 20%;
+        }
+        .sipoc-table td {
+            vertical-align: top;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            background-color: var(--white);
+        }
+        .process-step {
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px dashed var(--border);
+        }
+        .process-step:last-child { border-bottom: none; }
+        .step-title { font-weight: 700; display: block; color: var(--accent-color); margin-bottom: 4px;}
+
+        /* FOOTER */
+        footer { background-color: var(--white); border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.9rem; color: var(--text-light); margin-top: auto;}
+
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; height: auto; padding: 1rem; }
+            nav ul { flex-wrap: wrap; justify-content: center; margin-top: 1rem; }
+            .problem-section { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">LSS <span>PROJECT</span></div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="definir.html" class="active">Definir</a></li>
+                    <li><a href="medir.html">Medir</a></li>
+                    <li><a href="analizar.html">Analizar</a></li>
+                    <li><a href="mejorar.html">Mejorar</a></li>
+                    <li><a href="controlar.html">Controlar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <h1>4.1. Definir</h1>
+        <p>Identificación del problema, Voz del Cliente (VOC) y Mapeo de Alto Nivel (SIPOC)</p>
+    </div>
+
+    <div class="container">
+
+        <h2 class="section-title">Contexto del Problema</h2>
+        <section class="problem-section">
+            <div>
+                <p style="margin-bottom: 1rem;">
+                    Durante el año 2025, se identificó una problemática crítica en la gestión de iniciativas de inversión pública. 
+                    El bajo rendimiento en las aprobaciones pone de manifiesto oportunidades de fortalecimiento en los procesos de 
+                    formulación y evaluación, con el fin de optimizar recursos humanos y agilizar la evaluación técnica regional.
+                </p>
+                <div class="highlight-box">
+                    <strong>Objetivo:</strong> Optimizar el proceso para aumentar la tasa de aceptación y reducir los ciclos de revisión.
+                </div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">8.5%</span>
+                <span class="stat-label">Tasa de Aceptación Técnica<br>(5 aprobadas de 59 presentadas)</span>
+            </div>
+        </section>
+
+        <h2 class="section-title">4.1.1. Voz del Cliente (VOC)</h2>
+        
+        <p style="margin-bottom: 2rem;">Hallazgos basados en entrevistas semiestructuradas con evaluadores de la DIPLADER.</p>
+
+        <div class="voc-container">
+            <div class="voc-block success">
+                <h3>Bloque 1: Factores de Éxito</h3>
+                <p><strong>A. La Iniciativa Ideal:</strong> Definición precisa del problema, estrategia lógica, presupuesto realista y alineación con instrumentos de planificación.</p>
+                <p><strong>B. Indicadores de Confianza:</strong> Completitud documental, coherencia vertical y calidad de fuentes de datos.</p>
+                <p><strong>C. Atributos Diferenciales:</strong> Uso de datos empíricos actualizados y proactividad en la corrección.</p>
+                <div class="highlight-box">
+                    <em>Observación Clave (Glosa 13):</em> Imperativo incorporar componentes de capacitación que generen capacidades instaladas perdurables.
+                </div>
+            </div>
+
+            <div class="voc-block danger">
+                <h3>Bloque 2: Defectos y Causas de Rechazo</h3>
+                <p><strong>A. Defectos Críticos (Rechazo Automático):</strong></p>
+                <ul class="voc-list">
+                    <li>Inconsistencias estructurales graves en el presupuesto.</li>
+                    <li>Ausencia de documentación obligatoria.</li>
+                    <li>Infinanciabilidad intrínseca.</li>
+                    <li>Formulación deficiente del propósito.</li>
+                </ul>
+                <p><strong>B. Ámbitos de Ambigüedad:</strong> Diseños presupuestarios confusos y enfoques superficiales del problema.</p>
+            </div>
+
+            <div class="voc-block warning">
+                <h3>Bloque 3: Ineficiencias (Muda)</h3>
+                <p><strong>A. Desperdicios Operativos:</strong></p>
+                <ul class="voc-list">
+                    <li><strong>Espera:</strong> Intervalos ociosos por correcciones.</li>
+                    <li><strong>Sobreprocesamiento:</strong> Revisiones iterativas por falta de rigor.</li>
+                    <li><strong>Defectos Formales:</strong> Documentos escaneados no editables.</li>
+                    <li><strong>Redundancia:</strong> Solicitud anticipada de anexos.</li>
+                </ul>
+                <p><strong>B. Brechas Normativas:</strong> Omisión de consulta a manuales y déficit técnico en parametrización.</p>
+            </div>
+        </div>
+
+        <h2 class="section-title">4.1.2. SIPOC: Formulación y Evaluación</h2>
+        
+        <div class="table-responsive">
+            <table class="sipoc-table">
+                <thead>
+                    <tr>
+                        <th>Suppliers (Proveedores)</th>
+                        <th>Inputs (Entradas)</th>
+                        <th>Process (Proceso)</th>
+                        <th>Outputs (Salidas)</th>
+                        <th>Customers (Clientes)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <ul class="voc-list">
+                                <li>Entidades formuladoras</li>
+                                <li>Jefatura DIPLADER</li>
+                                <li>Comité Técnico</li>
+                                <li>Adm. Regional</li>
+                                <li>Consejo Regional (CORE)</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul class="voc-list">
+                                <li>Oficio conductor</li>
+                                <li>Anexos 1-5 (Diagnóstico, Presupuesto, etc.)</li>
+                                <li>Ficha IDI</li>
+                                <li>Resoluciones</li>
+                                <li>Recursos Humanos</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <div class="process-step">
+                                <span class="step-title">1. Formulación</span>
+                                Ingreso y Admisibilidad (5 días).
+                            </div>
+                            <div class="process-step">
+                                <span class="step-title">2. Evaluación Técnica</span>
+                                Asignación Comité (7 días). Aprobación (RS) o Rechazo.
+                            </div>
+                            <div class="process-step">
+                                <span class="step-title">3. Preparación</span>
+                                Oficio a entidad y Memo a Administrador.
+                            </div>
+                            <div class="process-step">
+                                <span class="step-title">4. Priorización</span>
+                                Comité decide si avanza al CORE.
+                            </div>
+                            <div class="process-step">
+                                <span class="step-title">5. Consejo Regional</span>
+                                Votación final y asignación.
+                            </div>
+                        </td>
+                        <td>
+                            <ul class="voc-list">
+                                <li>Cartera Aprobada (RS)</li>
+                                <li>Programas Priorizados</li>
+                                <li>Resoluciones CORE</li>
+                                <li>Oficios de Rechazo</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul class="voc-list">
+                                <li>Entidades proponentes</li>
+                                <li>Comunidad y beneficiarios</li>
+                                <li>Adm. Regional</li>
+                                <li>Contraloría</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="highlight-box" style="margin-top: 1rem; text-align: center;">
+            <strong>Límites del Proceso:</strong> Inicio (Recepción formal) &rarr; Término (Decisión final del CORE o Rechazo Definitivo).
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Abraham Castro. Licenciado en Ciencias de la Ingeniería</p>
+    </footer>
+
+</body>
+</html>

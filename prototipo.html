@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototipos | Arquitectura de Inversión</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        :root {
+            --primary: #0f172a;
+            --secondary: #334155;
+            --accent: #2563eb;
+            --accent-dark: #1e40af;
+            --success: #059669;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--secondary); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* --- NAVEGACIÓN --- */
+        header { background-color: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 70px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+        .logo span { color: var(--accent); }
+        nav ul { list-style: none; display: flex; gap: 20px; }
+        nav a { text-decoration: none; color: var(--secondary); font-weight: 500; font-size: 0.9rem; transition: color 0.3s; }
+        nav a:hover, nav a.active { color: var(--accent); }
+
+        /* --- HEADER DE PÁGINA --- */
+        .page-header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 3rem 2rem;
+            text-align: center;
+            background-image: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+        }
+        .page-header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+        .page-header p { color: #cbd5e1; max-width: 700px; margin: 0 auto; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+
+        /* --- ESTILOS DE LA LÍNEA DE TIEMPO (STAGES) --- */
+        .process-container {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        /* Línea vertical conectora */
+        .process-container::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+        }
+
+        .stage-card {
+            position: relative;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .stage-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+
+        /* Número de la etapa (Círculo) */
+        .stage-number {
+            position: absolute;
+            left: -56px;
+            top: 20px;
+            width: 36px;
+            height: 36px;
+            background-color: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            border: 4px solid var(--bg); /* Crea espacio visual con la línea */
+            z-index: 2;
+        }
+
+        /* Encabezado de la tarjeta */
+        .stage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stage-title {
+            font-size: 1.25rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .gate-badge {
+            background-color: #f1f5f9;
+            color: var(--secondary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* Detalles (Grid) */
+        .stage-details {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .detail-row strong { color: var(--primary); font-weight: 600; display: inline-block; width: 140px; }
+        
+        .ishikawa-note {
+            background-color: #ecfdf5;
+            color: #065f46;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--success);
+            margin-top: 10px;
+        }
+
+        /* BOTÓN DE ACCIÓN */
+        .btn-launch {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: background 0.3s;
+            text-align: center;
+            gap: 8px;
+        }
+
+        .btn-launch:hover { background-color: var(--accent-dark); }
+
+        /* Botón volver */
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .btn-back:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; height: auto; padding: 1rem; }
+            .process-container { padding-left: 0; }
+            .process-container::before { display: none; }
+            .stage-number { position: static; margin-bottom: 10px; width: 30px; height: 30px; font-size: 0.9rem; }
+            .stage-header { flex-direction: column; }
+            .detail-row strong { display: block; width: 100%; margin-bottom: 2px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">LSS <span>PROJECT</span></div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="definir.html">Definir</a></li>
+                    <li><a href="medir.html">Medir</a></li>
+                    <li><a href="analizar.html">Analizar</a></li>
+                    <li><a href="mejorar.html" class="active">Mejorar</a></li>
+                    <li><a href="controlar.html">Controlar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <h1>Prototipos</h1>
+        <p>Arquitectura de Inversión en 7 Micro-Etapas</p>
+    </div>
+
+    <div class="container">
+        
+        <a href="mejorar.html" class="btn-back">← Volver a Estrategia de Mejora</a>
+
+        <div class="process-container">
+
+            <div class="stage-card">
+                <div class="stage-number">1</div>
+                <div class="stage-header">
+                    <h3 class="stage-title">Filtro de Elegibilidad</h3>
+                    <span class="gate-badge">Gate "Top-Down"</span>
+                </div>
+                <div class="stage-details">
+                    <div class="detail-row">
+                        <strong>Objetivo:</strong> Corregir causas "proyectos definidos top-down" y "bases ambiguas".
+                    </div>
+                    <div class="detail-row">
+                        <strong>Acción:</strong> Validación exclusivamente legal y estratégica.
+                    </div>
+                    <div class="detail-row">
+                        <strong>Insumos:</strong> Certificados legales (Anexo 1) y selección de lineamiento ERD (Anexo 2).
+                    </div>
+                    <div class="ishikawa-note">
+                        <strong>Corrección Ishikawa:</strong> Evita iniciar procesos que no cumplen el marco normativo o estratégico del entorno.
+                    </div>
+                </div>
+                <a href="1.formulario.html" class="btn-launch">Abrir Prototipo Etapa 1 ↗</a>
+            </div>
+
+            <div class="stage-card">
+                <div class="stage-number">2</div>
+                <div class="stage-header">
+                    <h3 class="stage-title">Validación del Problema</h3>
+                    <span class="gate-badge">Gate "Causas Raíz"</span>
+                </div>
+                <div class="stage-details">
+                    <div class="detail-row">
+                        <strong>Objetivo:</strong> Abordar las causas "problema mal definido" y "enfoque en síntomas".
+                    </div>
+                    <div class="detail-row">
+                        <strong>Acción:</strong> Presentación exclusiva del Árbol de Problemas y Causas, sin referencia a soluciones.
+                    </div>
+                    <div class="detail-row">
+                        <strong>Insumos:</strong> Definición del problema central basada en evidencia.
+                    </div>
+                    <div class="ishikawa-note">
+                        <strong>Corrección Ishikawa:</strong> Bloquea el sesgo profesional que induce a proponer soluciones antes de comprender el problema.
+                    </div>
+                </div>
+                <a href="2.formulario.html" class="btn-launch">Abrir Prototipo Etapa 2 ↗</a>
+            </div>
+
+            <div class="stage-card">
+                <div class="stage-number">3</div>
+                <div class="stage-header">
+                    <h3 class="stage-title">Cuantificación de la Demanda</h3>
+                    <span class="gate-badge">Gate "Línea Base"</span>
+                </div>
+                <div class="stage-details">
+                    <div class="detail-row">
+                        <strong>Objetivo:</strong> Resolver la ausencia de datos primarios, enfoque territorial y línea base.
+                    </div>
+                    <div class="detail-row">
+                        <strong>Acción:</strong> Definición matemática de la población objetivo.
+                    </div>
+                    <div class="detail-row">
+                        <strong>Insumos:</strong> Segmentación en cascada (referencia, potencial y objetivo) con datos censales.
+                    </div>
+                    <div class="ishikawa-note">
+                        <strong>Corrección Ishikawa:</strong> Elimina diagnósticos subjetivos y estructura campos previamente indefinidos.
+                    </div>
+                </div>
+                <a href="3.formulario.html" class="btn-launch">Abrir Prototipo Etapa 3 ↗</a>
+            </div>
+
+            <div class="stage-card">
+                <div class="stage-number">4</div>
+                <div class="stage-header">
+                    <h3 class="stage-title">Coherencia Lógica</h3>
+                    <span class="gate-badge">Gate "Marco Lógico"</span>
+                </div>
+                <div class="stage-details">
+                    <div class="detail-row">
+                        <strong>Objetivo:</strong> Superar el bajo dominio y quiebres del marco lógico.
+                    </div>
+                    <div class="detail-row">
+                        <strong>Acción:</strong> Diseño de la matriz de marco lógico (Fin, Propósito y Componentes).
+                    </div>
+                    <div class="detail-row">
+                        <strong>Insumos:</strong> Indicadores, medios de verificación y validación de coherencia.
+                    </div>
+                    <div class="ishikawa-note">
+                        <strong>Corrección Ishikawa:</strong> Al aislar esta tarea, se reduce la fatiga por multitarea y se asegura foco metodológico.
+                    </div>
+                </div>
+                <a href="4.formulario.html" class="btn-launch">Abrir Prototipo Etapa 4 ↗</a>
+            </div>
+
+            <div class="stage-card">
+                <div class="stage-number">5</div>
+                <div class="stage-header">
+                    <h3 class="stage-title">Estrategia Operativa</h3>
+                    <span class="gate-badge">Gate "Cronograma"</span>
+                </div>
+                <div class="stage-details">
+                    <div class="detail-row">
+                        <strong>Objetivo:</strong> Mitigar componentes mal formulados y presiones irreales de ejecución.
+                    </div>
+                    <div class="detail-row">
+                        <strong>Acción:</strong> Desagregación de componentes en actividades y plazos.
+                    </div>
+                    <div class="detail-row">
+                        <strong>Insumos:</strong> Carta Gantt detallada (Anexo 3), alineada con la Etapa 4.
+                    </div>
+                    <div class="ishikawa-note">
+                        <strong>Corrección Ishikawa:</strong> Asegura factibilidad operativa antes de asignar costos.
+                    </div>
+                </div>
+                <a href="5.formulario.html" class="btn-launch">Abrir Prototipo Etapa 5 ↗</a>
+            </div>
+
+            <div class="stage-card">
+                <div class="stage-number">6</div>
+                <div class="stage-header">
+                    <h3 class="stage-title">Valorización y Presupuesto</h3>
+                    <span class="gate-badge">Gate "Estructura de Costos"</span>
+                </div>
+                <div class="stage-details">
+                    <div class="detail-row">
+                        <strong>Objetivo:</strong> Reducir errores por traspaso manual y asegurar cumplimiento normativo.
+                    </div>
+                    <div class="detail-row">
+                        <strong>Acción:</strong> Asignación monetaria a actividades previamente aprobadas.
+                    </div>
+                    <div class="detail-row">
+                        <strong>Insumos:</strong> Anexo 4 (Presupuesto) con validaciones automáticas.
+                    </div>
+                    <div class="ishikawa-note">
+                        <strong>Corrección Ishikawa:</strong> Disminuye la carga cognitiva al validar únicamente precios y no redefinir actividades.
+                    </div>
+                </div>
+                <a href="6.formulario.html" class="btn-launch">Abrir Prototipo Etapa 6 ↗</a>
+            </div>
+
+            <div class="stage-card">
+                <div class="stage-number">7</div>
+                <div class="stage-header">
+                    <h3 class="stage-title">Respaldo y Formalización</h3>
+                    <span class="gate-badge">Gate "Admisibilidad"</span>
+                </div>
+                <div class="stage-details">
+                    <div class="detail-row">
+                        <strong>Objetivo:</strong> Corregir la falta de medios de verificación y repositorios estructurados.
+                    </div>
+                    <div class="detail-row">
+                        <strong>Acción:</strong> Consolidación documental y formalización final.
+                    </div>
+                    <div class="detail-row">
+                        <strong>Insumos:</strong> Cotizaciones (Anexo 5), CV del equipo y minuta ejecutiva.
+                    </div>
+                    <div class="ishikawa-note">
+                        <strong>Corrección Ishikawa:</strong> Evita rechazos formales al final del proceso y consolida un repositorio histórico.
+                    </div>
+                </div>
+                <a href="7.formulario.html" class="btn-launch">Abrir Prototipo Etapa 7 ↗</a>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Abraham Castro. Licenciado en Ciencias de la Ingeniería</p>
+    </footer>
+
+</body>
+</html>

@@ -6,51 +6,134 @@
     <title>Mejorar | Portafolio Lean Six Sigma</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- ESTILOS GENERALES --- */
+        /* --- ESTILOS GENERALES Y VARIABLES --- */
         :root {
-            --primary-color: #0f172a;
-            --accent-color: #2563eb;
-            --success-color: #059669;
-            --text-dark: #334155;
-            --text-light: #64748b;
-            --bg-light: #f8fafc;
+            --primary: #0f172a;
+            --secondary: #334155;
+            --accent: #2563eb;       
+            --accent-light: #eff6ff;
+            --success: #059669;      
+            --bg: #f8fafc;
             --white: #ffffff;
             --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
+        body { background-color: var(--bg); color: var(--secondary); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
 
         /* --- NAVEGACIÓN --- */
-        header { background-color: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 80px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); text-transform: uppercase; }
-        .logo span { color: var(--accent-color); }
-        nav ul { list-style: none; display: flex; gap: 2rem; }
-        nav a { text-decoration: none; color: var(--text-dark); font-weight: 500; font-size: 0.95rem; transition: color 0.3s; }
-        nav a:hover { color: var(--accent-color); }
-        nav a.active { color: var(--accent-color); font-weight: 600; border-bottom: 2px solid var(--accent-color); }
+        header { background-color: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 70px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+        .logo span { color: var(--accent); }
+        nav ul { list-style: none; display: flex; gap: 20px; }
+        nav a { text-decoration: none; color: var(--secondary); font-weight: 500; font-size: 0.9rem; transition: color 0.3s; }
+        nav a:hover, nav a.active { color: var(--accent); }
 
         /* --- HEADER DE PÁGINA --- */
-        .page-header { background-color: var(--primary-color); color: var(--white); padding: 3rem 2rem; text-align: center; }
-        .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .page-header p { color: #cbd5e1; max-width: 800px; margin: 0 auto; }
+        .page-header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 4rem 2rem;
+            text-align: center;
+            background-image: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
+        .page-header p { color: #cbd5e1; max-width: 700px; margin: 0 auto; font-size: 1.1rem; }
 
         .container { max-width: 1000px; margin: 0 auto; padding: 3rem 2rem; }
 
-        /* --- TIMELINE DE IMPLEMENTACIÓN --- */
+        /* --- ESTILOS DE TARJETAS (SECCIÓN SUPERIOR) --- */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+
+        .section-label {
+            display: inline-block;
+            background-color: var(--accent-light);
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        h2 { color: var(--primary); font-size: 1.75rem; margin-bottom: 1rem; }
+        h3 { color: var(--secondary); font-size: 1.25rem; margin-bottom: 0.5rem; font-weight: 600; }
+        p { margin-bottom: 1rem; color: #475569; }
+
+        /* Estilo para la Propuesta Principal */
+        .proposal-box {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .proposal-box h2, .proposal-box p { color: white; position: relative; z-index: 2; }
+        .proposal-box .section-label { background-color: rgba(255,255,255,0.2); color: white; }
+
+        /* Grid de Beneficios */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .benefit-item {
+            background-color: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+            transition: background-color 0.3s;
+        }
+        
+        .benefit-item:hover {
+            background-color: #f1f5f9;
+        }
+
+        .benefit-item h4 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; font-weight: 700; }
+        .benefit-item p { font-size: 0.9rem; margin-bottom: 0; color: #475569; }
+
+        /* Colores específicos para bordes de beneficios */
+        .b-waste { border-left-color: #ef4444; } /* Rojo - Reducción */
+        .b-time { border-left-color: #3b82f6; } /* Azul - Tiempo */
+        .b-feedback { border-left-color: #8b5cf6; } /* Violeta - Feedback */
+        .b-bottleneck { border-left-color: #f59e0b; } /* Naranja - Alerta */
+        .b-quality { border-left-color: #10b981; } /* Verde - Calidad */
+
+        /* --- ESTILOS TIMELINE (SECCIÓN INFERIOR) --- */
+        .timeline-section-title {
+            text-align: center;
+            margin: 4rem 0 3rem;
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
         .intro-box {
             background-color: var(--white);
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             margin-bottom: 3rem;
-            border-left: 5px solid var(--success-color);
+            border-left: 5px solid var(--success);
         }
 
         .timeline { position: relative; max-width: 800px; margin: 0 auto; }
         
-        /* Línea vertical */
         .timeline::after {
             content: '';
             position: absolute;
@@ -58,7 +141,7 @@
             background-color: #e2e8f0;
             top: 0;
             bottom: 0;
-            left: 30px; /* Ajuste para móvil/desktop */
+            left: 30px; 
             margin-left: -2px;
         }
 
@@ -69,11 +152,10 @@
             padding: 2rem;
             margin-bottom: 2rem;
             margin-left: 60px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             border: 1px solid var(--border);
         }
 
-        /* Círculo del nodo */
         .timeline-item::before {
             content: '';
             position: absolute;
@@ -81,11 +163,11 @@
             height: 20px;
             right: 100%;
             background-color: var(--white);
-            border: 4px solid var(--accent-color);
+            border: 4px solid var(--accent);
             top: 30px;
             border-radius: 50%;
             z-index: 1;
-            margin-right: 22px; /* Distancia al nodo */
+            margin-right: 22px; 
         }
 
         .phase-badge {
@@ -98,25 +180,18 @@
             margin-bottom: 1rem;
         }
         
-        .phase-1 .phase-badge { background-color: #dcfce7; color: #15803d; } /* Verde claro */
-        .phase-2 .phase-badge { background-color: #dbeafe; color: #1e40af; } /* Azul claro */
-        .phase-3 .phase-badge { background-color: #f3e8ff; color: #7e22ce; } /* Violeta */
+        .phase-1 .phase-badge { background-color: #dcfce7; color: #15803d; } 
+        .phase-2 .phase-badge { background-color: #dbeafe; color: #1e40af; } 
+        .phase-3 .phase-badge { background-color: #f3e8ff; color: #7e22ce; } 
 
         .phase-1 .timeline-item::before { border-color: #15803d; }
         .phase-2 .timeline-item::before { border-color: #1e40af; }
         .phase-3 .timeline-item::before { border-color: #7e22ce; }
 
-        .time-frame {
-            font-weight: 700;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .timeline-title { font-size: 1.5rem; color: var(--primary-color); margin-bottom: 1rem; }
+        .time-frame { font-weight: 700; color: #64748b; font-size: 0.9rem; margin-bottom: 0.5rem; display: block; }
+        .timeline-title { font-size: 1.5rem; color: var(--primary); margin-bottom: 1rem; }
         .timeline-content ul { padding-left: 1.2rem; margin-top: 1rem; }
-        .timeline-content li { margin-bottom: 0.5rem; color: var(--text-dark); }
+        .timeline-content li { margin-bottom: 0.5rem; color: var(--secondary); }
         
         .impact-box {
             margin-top: 1.5rem;
@@ -124,11 +199,31 @@
             padding: 1rem;
             border-radius: 6px;
             font-weight: 600;
-            color: var(--primary-color);
+            color: var(--primary);
             border: 1px dashed var(--border);
         }
 
-        footer { background-color: var(--white); border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.9rem; color: var(--text-light); margin-top: auto;}
+        .visual-placeholder {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            border-radius: 6px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        footer { background-color: var(--white); border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.9rem; color: #94748b; margin-top: auto;}
+
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; height: auto; padding: 1rem; }
+            nav ul { flex-wrap: wrap; justify-content: center; margin-top: 1rem; }
+        }
     </style>
 </head>
 <body>
@@ -151,17 +246,101 @@
 
     <div class="page-header">
         <h1>4.4. Mejorar</h1>
-        <p>Plan de Transformación Gradual del Sistema de Postulación</p>
+        <p>Propuesta de Rediseño: Modelo de Evaluación Modular (Stage-Gate)</p>
     </div>
 
     <div class="container">
-        
+
+        <div class="card">
+            <span class="section-label">Diagnóstico</span>
+            <h2>I. Antecedentes</h2>
+            <p>
+                El estudio técnico de iniciativas se desarrolla actualmente mediante un <strong>procedimiento concentrado en una única instancia evaluativa</strong>, integrando simultáneamente exigencias legales, técnicas y financieras.
+            </p>
+            <p>
+                Este diseño monolítico genera reprocesos relevantes, uso ineficiente de recursos técnicos y dificulta la identificación precisa de las etapas donde se producen demoras u observaciones recurrentes.
+            </p>
+            
+        </div>
+
+        <div class="card">
+            <span class="section-label">Evidencia Científica</span>
+            <h2>II. Fundamento Técnico</h2>
+            <p>
+                La evidencia proveniente de estudios en neurociencia cognitiva y psicología del aprendizaje respalda la estructuración de procesos complejos en etapas secuenciales.
+            </p>
+            
+            <div class="benefits-grid">
+                <div class="benefit-item" style="border-left-color: #6366f1;">
+                    <h4>Chunking (B. Oakley, 2014)</h4>
+                    <p>La memoria de trabajo humana es limitada. La exposición simultánea a múltiples tareas complejas (multitarea) incrementa la tasa de error y reduce la calidad del análisis.</p>
+                </div>
+                <div class="benefit-item" style="border-left-color: #8b5cf6;">
+                    <h4>Carga Cognitiva (Sweller)</h4>
+                    <p>Los procesos deben minimizar la carga administrativa innecesaria (carga extraña) para concentrar el esfuerzo en la complejidad real del problema.</p>
+                </div>
+            </div>
+            
+             <div class="visual-placeholder">
+                
+            </div>
+        </div>
+
+        <div class="card proposal-box">
+            <span class="section-label">Solución</span>
+            <h2>III. La Propuesta: Evaluación Secuencial</h2>
+            <p style="font-size: 1.1rem; font-weight: 500;">
+                Estructurar el estudio técnico en etapas secuenciales aprobatorias (Stage-Gate).
+            </p>
+            <p>
+                El avance a la etapa siguiente se encuentra condicionado a la aprobación formal de la anterior. Se evita el desarrollo completo de iniciativas que no superen validaciones iniciales de alineación, pertinencia o factibilidad.
+            </p>
+            <div class="visual-placeholder" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: white;">
+                
+            </div>
+        </div>
+
+        <div class="card">
+            <span class="section-label">Impacto</span>
+            <h2>IV. Beneficios Esperados</h2>
+            <div class="benefits-grid">
+                
+                <div class="benefit-item b-waste">
+                    <h4>Reducción del desperdicio de recursos</h4>
+                    <p>Se evita el desarrollo de antecedentes financieros y presupuestarios para iniciativas no viables desde etapas tempranas.</p>
+                </div>
+
+                <div class="benefit-item b-time">
+                    <h4>Optimización del tiempo técnico</h4>
+                    <p>El esfuerzo profesional se concentra en iniciativas que superan las validaciones iniciales.</p>
+                </div>
+
+                <div class="benefit-item b-feedback">
+                    <h4>Retroalimentación temprana y focalizada</h4>
+                    <p>Validaciones acotadas, como la definición del problema, pueden resolverse en plazos breves, incluso inferiores a una hora.</p>
+                </div>
+
+                <div class="benefit-item b-bottleneck">
+                    <h4>Identificación clara de cuellos de botella</h4>
+                    <p>La segmentación del proceso permite detectar con precisión las etapas donde se concentran demoras u observaciones.</p>
+                </div>
+
+                <div class="benefit-item b-quality" style="grid-column: 1 / -1;">
+                    <h4>Mejora de la calidad técnica</h4>
+                    <p>Las correcciones tempranas reducen errores acumulativos y aumentan la probabilidad de aprobación y financiamiento.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <h2 class="timeline-section-title">V. Plan de Implementación</h2>
+
         <div class="intro-box">
-            <h3 style="margin-bottom: 10px;">Estrategia de Implementación</h3>
+            <h3 style="margin-bottom: 10px;">Estrategia de Transformación</h3>
             <p>
                 El plan propone una transformación gradual priorizando la higiene administrativa, seguida de digitalización 
                 y analítica estratégica. Se validarán las mejoras mediante una <strong>prueba piloto</strong> en un grupo controlado 
-                para mitigar riesgos, siguiendo buenas prácticas ágiles.
+                para mitigar riesgos.
             </p>
         </div>
 
@@ -176,11 +355,11 @@
                         <p>Enfoque en mitigar errores humanos sin desarrollo de software complejo.</p>
                         <ul>
                             <li><strong>Guías Multipropósito:</strong> PDF, Excel y JSON para generar salidas estandarizadas.</li>
-                            <li><strong>Repositorio Casos de Éxito:</strong> Base de datos de proyectos históricos aprobados para replicar estándares.</li>
+                            <li><strong>Repositorio Casos de Éxito:</strong> Base de datos de proyectos históricos aprobados.</li>
                             <li><strong>Soporte Visual:</strong> Infografías interactivas sobre errores comunes.</li>
                         </ul>
                         <div class="impact-box">
-                            Impacto Esperado: Reducción de reprocesos.
+                            Impacto Esperado: Reducción inmediata de reprocesos por forma.
                         </div>
                     </div>
                 </div>
@@ -195,10 +374,12 @@
                         <p>Eliminación de fricciones analógicas mediante reglas de negocio estrictas.</p>
                         <ul>
                             <li><strong>Plataforma Web Nativa:</strong> Eliminación del papel y correos electrónicos.</li>
-                            <li><strong>Control Activo:</strong> Validaciones automáticas (Input Masks) que impiden avanzar con errores formales.</li>
-                            <li><strong>Datos Estructurados:</strong> Almacenamiento que facilita trazabilidad y reutilización.</li>
+                            <li><strong>Control Activo:</strong> Validaciones automáticas (Input Masks) que impiden errores.</li>
+                            <li><strong>Datos Estructurados:</strong> Facilitan la trazabilidad y reutilización.</li>
                         </ul>
-                        [Image of Web Platform Dashboard Mockup]
+                        <div class="visual-placeholder">
+                            
+                        </div>
                     </div>
                 </div>
             </div>
@@ -212,13 +393,14 @@
                         <p>Toma de decisiones basada en datos para optimización estratégica.</p>
                         <ul>
                             <li><strong>Analítica Avanzada:</strong> Modelos diagnósticos/predictivos sobre data digitalizada.</li>
-                            <li><strong>KPIs Territoriales:</strong> Dashboards en tiempo real para medir impacto del gasto y eficiencia operativa.</li>
+                            <li><strong>KPIs Territoriales:</strong> Dashboards en tiempo real para medir impacto.</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
         </div>
+
     </div>
 
     <footer>
